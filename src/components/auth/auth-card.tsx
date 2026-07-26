@@ -8,48 +8,43 @@ interface AuthCardProps {
   footer?: ReactNode;
 }
 
-const PRODUCT_POINTS = [
-  'Espacios de trabajo separados para administradores, clínicas, especialistas y pacientes',
-  'Agenda, consultas e historial clínico en un mismo flujo',
-  'Datos clínicos en PostgreSQL y autenticación con Supabase',
-];
-
 export function AuthCard({ title, description, children, footer }: AuthCardProps) {
   return (
-    <div className="flex min-h-screen bg-canvas grain">
-      {/* Panel de marca */}
-      <aside className="hidden w-[42%] flex-col justify-between bg-brand-dark p-10 text-white lg:flex">
-        <Link href="/" className="font-display text-2xl tracking-tight text-white">
-          HealthCloud
-        </Link>
-        <div>
-          <h2 className="max-w-md font-display text-3xl leading-snug">
-            Una plataforma donde cada actor sabe exactamente dónde está
-          </h2>
-          <ul className="mt-8 max-w-md space-y-4 text-sm leading-relaxed text-white/75">
-            {PRODUCT_POINTS.map((point) => (
-              <li key={point} className="flex gap-3">
-                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-white/60" />
-                {point}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <p className="text-xs text-white/50">HealthCloud · Gestión de servicios de salud</p>
-      </aside>
-
-      {/* Formulario */}
-      <div className="flex flex-1 items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
-          <Link href="/" className="font-display text-2xl text-ink lg:hidden">
+    <div className="min-h-screen bg-canvas text-inkBody">
+      <header className="border-b border-lineStrong">
+        <div className="mx-auto flex max-w-[1240px] items-center justify-between px-5 py-5 sm:px-8">
+          <Link href="/" className="font-display text-lg text-ink">
             HealthCloud
           </Link>
-          <h1 className="mt-8 font-display text-3xl text-ink lg:mt-0">{title}</h1>
-          <p className="mt-2 text-sm text-inkMuted">{description}</p>
-          {children}
-          {footer && <div className="mt-8 border-t border-line pt-6 text-sm text-inkMuted">{footer}</div>}
+          <span className="text-sm text-inkMuted">Acceso seguro</span>
         </div>
-      </div>
+      </header>
+
+      <main className="mx-auto grid max-w-[1240px] gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:py-20">
+        {/* Columna de bienvenida */}
+        <section className="lg:pt-3">
+          <p className="text-sm font-bold text-brand-mid">Bienvenido</p>
+          <h1 className="mt-3 max-w-md font-display text-[32px] leading-[1.15] text-ink">
+            Accede a tu espacio de HealthCloud.
+          </h1>
+          <p className="mt-5 max-w-sm text-sm leading-6 text-inkMuted">
+            Cada cuenta opera en un entorno independiente: administradores, clínicas,
+            especialistas y pacientes trabajan en espacios separados pero coordinados.
+          </p>
+        </section>
+
+        {/* Tarjeta del formulario */}
+        <section className="border border-line bg-surface">
+          <div className="border-b border-line px-5 py-5">
+            <h2 className="text-base font-bold text-ink">{title}</h2>
+            <p className="mt-1 text-sm text-inkMuted">{description}</p>
+          </div>
+          <div className="p-5">{children}</div>
+          {footer && (
+            <div className="border-t border-line px-5 py-4 text-sm text-inkMuted">{footer}</div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

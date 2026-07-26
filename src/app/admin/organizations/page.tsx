@@ -19,7 +19,7 @@ export default async function AdminOrganizationsPage() {
       title="Organizaciones"
       description="Invita, supervisa y bloquea clínicas o centros médicos"
     >
-      <form action={inviteOrganization} className="mb-8 grid gap-4 rounded-xl border border-line bg-surface p-6 shadow-card sm:grid-cols-3">
+      <form action={inviteOrganization} className="mb-8 grid gap-4 rounded-2xl border border-line bg-surface p-6 sm:grid-cols-3">
         <Input name="email" label="Email del responsable" type="email" required placeholder="clinica@email.com" />
         <Input name="organizationName" label="Nombre de la organización" required placeholder="Clínica Central" />
         <div className="flex items-end">
@@ -31,7 +31,7 @@ export default async function AdminOrganizationsPage() {
         {organizations.map((org) => (
           <div
             key={org.id}
-            className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-5 shadow-card sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:justify-between"
           >
             <div>
               <div className="flex items-center gap-2">

@@ -23,7 +23,7 @@ export default async function SpecialistPatientsPage() {
         {patients.map((patient) => (
           <div
             key={patient.id}
-            className="rounded-xl border border-line bg-surface p-5 shadow-card"
+            className="rounded-2xl border border-line bg-surface p-5"
           >
             <h3 className="font-medium text-ink">{patient.fullName ?? patient.email}</h3>
             <p className="mt-1 text-sm text-inkMuted">{patient.email}</p>

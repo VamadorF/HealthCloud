@@ -17,7 +17,7 @@ export default function DemoSpecialistPatientsPage() {
       <Panel title="Lista de pacientes">
         <div className="grid gap-4 sm:grid-cols-2">
           {PATIENTS.map((p) => (
-            <div key={p.name} className="rounded-xl border border-line bg-canvas p-5">
+            <div key={p.name} className="rounded-2xl border border-line bg-canvas p-5">
               <div className="flex items-start justify-between">
                 <p className="font-medium text-ink">{p.name}</p>
                 <span className="rounded-full bg-brand-light px-2 py-0.5 text-xs text-brand-dark">{p.tag}</span>

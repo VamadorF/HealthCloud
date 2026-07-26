@@ -28,7 +28,7 @@ export default async function SpecialistConsultationsPage() {
         {appointments.map((appt) => (
           <div
             key={appt.id}
-            className="rounded-xl border border-line bg-surface p-6 shadow-card"
+            className="rounded-2xl border border-line bg-surface p-6"
           >
             <div className="mb-4">
               <div className="flex flex-wrap items-center gap-2">

@@ -24,7 +24,7 @@ export default async function PatientSymptomsPage() {
     >
       <form
         action={reportSymptoms}
-        className="mb-8 grid max-w-2xl gap-4 rounded-xl border border-line bg-surface p-6 shadow-card"
+        className="mb-8 grid max-w-2xl gap-4 rounded-2xl border border-line bg-surface p-6"
       >
         <Textarea
           id="description"
@@ -70,7 +70,7 @@ export default async function PatientSymptomsPage() {
         {reports.map((report) => (
           <div
             key={report.id}
-            className="rounded-xl border border-line bg-surface p-5 shadow-card"
+            className="rounded-2xl border border-line bg-surface p-5"
           >
             <div className="flex items-center gap-2">
               <StatusBadge status={report.isEmergency ? 'EMERGENCY' : report.urgencyLevel} />

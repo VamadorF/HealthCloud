@@ -44,7 +44,7 @@ export function ForgotPasswordForm() {
 
   if (success) {
     return (
-      <div className="mt-8 space-y-4 text-center">
+      <div className="space-y-4 text-center">
         <Alert tone="success">
           Si el correo existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña.
         </Alert>
@@ -56,7 +56,7 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         id="email"
         label="Email"

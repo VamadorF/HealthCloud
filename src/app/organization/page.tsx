@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
-import { PlatformShell, StatCard, Panel } from '@/components/platform/platform-shell';
+import { PlatformShell, StatCard, Panel, Row } from '@/components/platform/platform-shell';
 
 export default async function OrganizationDashboardPage() {
   const user = await requireRole('ORGANIZATION');
@@ -31,37 +31,33 @@ export default async function OrganizationDashboardPage() {
         />
       </div>
 
-      <div className="mt-8 grid items-start gap-6 lg:grid-cols-2">
+      <div className="mt-5 grid items-start gap-5 xl:grid-cols-[1.4fr_0.9fr]">
         <Panel title={organization?.name ?? 'Organización pendiente'}>
-          <p className="text-sm text-inkMuted">
+          <p className="px-6 py-5 text-sm leading-6 text-inkMuted">
             {organization?.description ?? 'Completa tu perfil corporativo para activar tu red médica.'}
           </p>
         </Panel>
 
         <Panel title="Áreas de gestión">
-          <div className="space-y-3">
-            {[
-              { href: '/organization/profile', title: 'Perfil corporativo', desc: 'Información institucional visible para tu red' },
-              { href: '/organization/specialists', title: 'Plantilla médica', desc: 'Invita o remueve especialistas de tu red' },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="group flex items-center justify-between gap-4 rounded-lg bg-canvas px-4 py-3 transition duration-200 ease-out-soft hover:bg-brand-light"
-              >
+          {[
+            { href: '/organization/profile', title: 'Perfil corporativo', desc: 'Información institucional visible para tu red' },
+            { href: '/organization/specialists', title: 'Plantilla médica', desc: 'Invita o remueve especialistas de tu red' },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} className="group block">
+              <Row className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-medium text-ink group-hover:text-brand-dark">{item.title}</p>
-                  <p className="mt-0.5 text-xs text-inkMuted">{item.desc}</p>
+                  <p className="text-sm font-bold text-ink group-hover:text-brand-mid">{item.title}</p>
+                  <p className="mt-0.5 text-sm text-inkMuted">{item.desc}</p>
                 </div>
                 <span
                   aria-hidden="true"
-                  className="text-inkMuted/50 transition duration-200 ease-out-quart group-hover:translate-x-0.5 group-hover:text-brand"
+                  className="text-inkMuted/50 transition duration-200 ease-out-soft group-hover:translate-x-0.5 group-hover:text-brand-mid"
                 >
                   →
                 </span>
-              </Link>
-            ))}
-          </div>
+              </Row>
+            </Link>
+          ))}
         </Panel>
       </div>
     </PlatformShell>

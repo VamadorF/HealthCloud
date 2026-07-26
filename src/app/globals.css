@@ -3,32 +3,28 @@
 @tailwind utilities;
 
 :root {
-  --background: #f6f4f0;
-  --foreground: #14212a;
+  --background: #f5f6f3;
+  --foreground: #22312e;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-family: var(--font-atkinson), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* La dirección de arte usa una sola familia (Atkinson Hyperlegible);
+   los títulos se distinguen por peso y tracking apretado. */
+@layer base {
+  .font-display {
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
-
-/* Subtle grain for depth — not "mock", just texture */
-.grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-}
-
-.demo-sidebar-link {
-  @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/75 transition duration-200 ease-out-soft hover:bg-white/10 hover:text-white;
-}
-
-.demo-sidebar-link-active {
-  @apply bg-white/15 text-white font-medium;
 }

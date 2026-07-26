@@ -61,7 +61,7 @@ export function SignupForm() {
 
   if (success) {
     return (
-      <div className="mt-8 space-y-4 text-center">
+      <div className="space-y-4 text-center">
         <Alert tone="success">
           Cuenta creada. Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.
         </Alert>
@@ -73,7 +73,7 @@ export function SignupForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         id="fullName"
         label="Nombre completo"

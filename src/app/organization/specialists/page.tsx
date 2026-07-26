@@ -25,7 +25,7 @@ export default async function OrganizationSpecialistsPage() {
     >
       <form
         action={inviteSpecialist}
-        className="mb-8 grid gap-4 rounded-xl border border-line bg-surface p-6 shadow-card sm:grid-cols-3"
+        className="mb-8 grid gap-4 rounded-2xl border border-line bg-surface p-6 sm:grid-cols-3"
       >
         <Input name="email" label="Email del especialista" type="email" required />
         <Input name="specialty" label="Especialidad" placeholder="Cardiología" />
@@ -38,7 +38,7 @@ export default async function OrganizationSpecialistsPage() {
         {specialists.map((member) => (
           <div
             key={member.id}
-            className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-5 shadow-card sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:justify-between"
           >
             <div>
               <div className="flex flex-wrap items-center gap-2">

@@ -1,7 +1,7 @@
 const tones = {
-  error: 'border-red-200 bg-red-50 text-red-700',
-  success: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  info: 'border-brand-soft bg-brand-light text-brand-dark',
+  error: 'border-accent/30 bg-accent-soft text-accent',
+  success: 'border-brand-soft bg-brand-light text-brand-mid',
+  info: 'border-line bg-canvas text-inkMuted',
 };
 
 export function Alert({
@@ -12,7 +12,7 @@ export function Alert({
   children: React.ReactNode;
 }) {
   return (
-    <div role={tone === 'error' ? 'alert' : 'status'} className={`rounded-lg border px-4 py-3 text-sm ${tones[tone]}`}>
+    <div role={tone === 'error' ? 'alert' : 'status'} className={`border px-4 py-3 text-sm ${tones[tone]}`}>
       {children}
     </div>
   );

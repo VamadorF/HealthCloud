@@ -26,7 +26,7 @@ export default async function PatientHistoryPage() {
         {appointments.map((appt) => (
           <div
             key={appt.id}
-            className="rounded-xl border border-line bg-surface p-6 shadow-card"
+            className="rounded-2xl border border-line bg-surface p-6"
           >
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="font-medium text-ink">{formatDateTime(appt.scheduledAt)}</h3>

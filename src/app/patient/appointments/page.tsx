@@ -29,7 +29,7 @@ export default async function PatientAppointmentsPage() {
     >
       <form
         action={requestAppointment}
-        className="mb-8 grid max-w-2xl gap-4 rounded-xl border border-line bg-surface p-6 shadow-card"
+        className="mb-8 grid max-w-2xl gap-4 rounded-2xl border border-line bg-surface p-6"
       >
         <Input name="scheduledAt" label="Fecha y hora" type="datetime-local" required />
         <Input name="reason" label="Motivo de consulta" required placeholder="Control rutinario" />
@@ -49,7 +49,7 @@ export default async function PatientAppointmentsPage() {
         {appointments.map((appt) => (
           <div
             key={appt.id}
-            className="rounded-xl border border-line bg-surface p-5 shadow-card"
+            className="rounded-2xl border border-line bg-surface p-5"
           >
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-medium text-ink">{formatDateTime(appt.scheduledAt)}</p>

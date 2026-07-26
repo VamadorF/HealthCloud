@@ -13,19 +13,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center gap-2 rounded-full font-medium transition duration-200 ease-out-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-60';
+      'inline-flex items-center justify-center rounded-xl border font-bold transition-all duration-200 ease-out-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-soft disabled:cursor-wait disabled:opacity-60 disabled:pointer-events-none';
 
     const variants = {
-      primary: 'bg-brand text-white hover:bg-brand-dark',
-      secondary: 'border border-line bg-surface text-ink hover:border-brand/40 hover:text-brand-dark',
-      danger: 'bg-accent text-white hover:bg-accent-dark focus-visible:ring-accent',
-      ghost: 'text-inkMuted hover:bg-ink/5 hover:text-ink',
+      primary: 'border-brand bg-brand text-white hover:-translate-y-px hover:bg-brand-dark',
+      secondary: 'border-lineStrong bg-surface text-brand-mid hover:bg-brand-light',
+      danger: 'border-accent bg-accent text-white hover:-translate-y-px hover:bg-accent-dark focus-visible:ring-accent-soft',
+      ghost: 'border-transparent text-brand-mid hover:border-brand-soft hover:bg-brand-light',
     };
 
     const sizes = {
-      sm: 'h-9 px-4 text-sm',
-      md: 'h-10 px-5 text-sm',
-      lg: 'h-11 px-6 text-base',
+      sm: 'h-9 px-3.5 text-sm',
+      md: 'h-11 px-4 text-sm',
+      lg: 'h-12 px-6 text-base',
     };
 
     return (
@@ -36,7 +36,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
         {...props}
       >
-        {loading && <Spinner />}
+        {loading && <Spinner className="mr-2 h-3.5 w-3.5" />}
         {children}
       </button>
     );

@@ -21,7 +21,7 @@ export default async function AdminInvitationsPage() {
         {invitations.map((inv) => (
           <div
             key={inv.id}
-            className="rounded-xl border border-line bg-surface p-5 shadow-card"
+            className="rounded-2xl border border-line bg-surface p-5"
           >
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-medium text-ink">{inv.email}</p>

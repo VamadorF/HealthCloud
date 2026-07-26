@@ -50,7 +50,7 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         id="password"
         label="Nueva contraseña"

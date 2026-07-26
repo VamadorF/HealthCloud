@@ -31,7 +31,7 @@ export default async function PatientDashboardPage() {
           <Link
             key={item.href}
             href={item.href}
-            className="group flex flex-col justify-between gap-4 rounded-xl border border-line bg-surface p-5 shadow-card transition duration-200 ease-out-quart hover:-translate-y-0.5 hover:border-brand/30"
+            className="group flex flex-col justify-between gap-4 rounded-2xl border border-line bg-surface p-5 transition duration-200 ease-out-quart hover:-translate-y-0.5 hover:border-brand/30"
           >
             <div>
               <h3 className="font-medium text-ink group-hover:text-brand">{item.title}</h3>

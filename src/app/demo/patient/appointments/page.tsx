@@ -22,10 +22,10 @@ export default function DemoPatientAppointmentsPage() {
           ))}
         </div>
 
-        <div className="mt-6 rounded-xl border border-dashed border-brand/30 bg-brand-light/50 p-5">
+        <div className="mt-6 rounded-2xl border border-dashed border-brand/30 bg-brand-light/50 p-5">
           <p className="text-sm font-medium text-ink">Solicitar nueva hora</p>
           <p className="mt-1 text-xs text-inkMuted">Medicina general · Clínica Andes Norte · Disponibilidad esta semana</p>
-          <button className="mt-4 rounded-full bg-brand px-4 py-2 text-sm font-medium text-white">
+          <button className="mt-4 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white">
             Buscar horario
           </button>
         </div>

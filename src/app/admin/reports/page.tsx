@@ -33,10 +33,10 @@ export default async function AdminReportsPage() {
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-xl border border-line bg-surface shadow-card">
+      <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-line">
-            <tr className="text-xs font-medium uppercase tracking-wider text-inkMuted">
+          <thead className="border-b border-line bg-[#f7f9f7]">
+            <tr className="text-sm font-bold text-inkMuted">
               <th className="px-4 py-3">Fecha</th>
               <th className="px-4 py-3">Usuarios</th>
               <th className="px-4 py-3">Activos</th>
@@ -45,9 +45,9 @@ export default async function AdminReportsPage() {
               <th className="px-4 py-3">Organizaciones</th>
             </tr>
           </thead>
-          <tbody className="text-ink">
+          <tbody className="text-inkBody">
             {metrics.map((m) => (
-              <tr key={m.id} className="border-b border-line/60 last:border-b-0">
+              <tr key={m.id} className="border-b border-line/60 last:border-b-0 hover:bg-[#fafbfa]">
                 <td className="px-4 py-3">{formatDate(m.date)}</td>
                 <td className="px-4 py-3">{m.totalUsers}</td>
                 <td className="px-4 py-3">{m.activeUsers}</td>

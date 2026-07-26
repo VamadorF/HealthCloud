@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { DemoRole, DEMO_NAV, DEMO_USERS } from '@/lib/mock/demo-data';
+import { PillNav, LocationCrumb } from '@/components/platform/sidebar-nav';
 
 interface DemoShellProps {
   role: DemoRole;
@@ -8,11 +9,11 @@ interface DemoShellProps {
   children: React.ReactNode;
 }
 
-const ROLE_COLORS: Record<DemoRole, string> = {
-  admin: 'bg-role-admin',
-  organization: 'bg-role-org',
-  specialist: 'bg-role-spec',
-  patient: 'bg-role-patient',
+const ROLE_CONTEXT: Record<DemoRole, string> = {
+  admin: 'Panel maestro de administración',
+  organization: 'Cuenta institucional',
+  specialist: 'Cuenta profesional',
+  patient: 'Cuenta personal',
 };
 
 export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
@@ -20,61 +21,40 @@ export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
   const nav = DEMO_NAV[role];
 
   return (
-    <div className="min-h-screen bg-canvas grain">
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <aside className={`hidden w-64 flex-shrink-0 flex-col ${ROLE_COLORS[role]} text-white lg:flex`}>
-          <div className="border-b border-white/10 px-5 py-6">
-            <Link href="/" className="font-display text-xl tracking-tight text-white">
+    <div className="min-h-screen bg-canvas">
+      {/* Cabecera */}
+      <header className="border-b border-lineStrong">
+        <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <div>
+            <Link href="/" className="font-display text-lg text-ink">
               HealthCloud
             </Link>
-            <p className="mt-3 text-xs uppercase tracking-widest text-white/50">Vista {user.roleLabel}</p>
+            <p className="mt-1 text-sm text-inkMuted">
+              {ROLE_CONTEXT[role]} · Vista de demostración
+            </p>
           </div>
-
-          <nav className="flex-1 space-y-1 px-3 py-5">
-            {nav.map((item) => (
-              <Link key={item.href} href={item.href} className="demo-sidebar-link">
-                <span className="h-1.5 w-1.5 rounded-full bg-white/40" />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="border-t border-white/10 p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-xs font-semibold">
-                {user.initials}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{user.name}</p>
-                <p className="truncate text-xs text-white/60">{user.context}</p>
-              </div>
-            </div>
-            <Link
-              href="/"
-              className="mt-4 block text-center text-xs text-white/50 transition hover:text-white"
-            >
-              ← Volver al inicio
-            </Link>
+          <div className="flex flex-col gap-2 sm:items-end">
+            <p className="text-sm text-inkMuted">
+              {user.name} · {user.context}
+            </p>
+            <RoleSwitcher current={role} />
           </div>
-        </aside>
-
-        {/* Main */}
-        <div className="flex flex-1 flex-col">
-          <header className="border-b border-line bg-surface/80 px-6 py-4 backdrop-blur-sm lg:px-10">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-inkMuted">{user.roleLabel}</p>
-                <h1 className="font-display text-2xl text-ink md:text-3xl">{title}</h1>
-                {subtitle && <p className="mt-1 max-w-2xl text-sm text-inkMuted">{subtitle}</p>}
-              </div>
-              <RoleSwitcher current={role} />
-            </div>
-          </header>
-
-          <main className="flex-1 px-6 py-8 lg:px-10">{children}</main>
         </div>
-      </div>
+      </header>
+
+      <main className="mx-auto max-w-[1600px] px-5 py-9 sm:px-8">
+        {/* Tarjeta hero: ubicación, título y navegación por secciones */}
+        <div className="rounded-2xl border border-line bg-surface px-6 py-6 sm:px-8">
+          <LocationCrumb roleLabel={user.roleLabel} items={nav} />
+          <h1 className="mt-2 font-display text-3xl text-ink sm:text-[34px]">{title}</h1>
+          {subtitle && (
+            <p className="mt-3 max-w-3xl text-base leading-6 text-inkMuted">{subtitle}</p>
+          )}
+          <PillNav items={nav} />
+        </div>
+
+        <div className="mt-6">{children}</div>
+      </main>
     </div>
   );
 }
@@ -88,12 +68,12 @@ function RoleSwitcher({ current }: { current: DemoRole }) {
   ];
 
   return (
-    <div className="flex shrink-0 gap-1 rounded-full border border-line bg-canvas p-1 text-xs">
+    <div className="flex shrink-0 gap-1 rounded-2xl border border-line bg-surface p-1 text-xs">
       {roles.map((r) => (
         <Link
           key={r.key}
           href={`/demo/${r.key}`}
-          className={`rounded-full px-3 py-1.5 transition duration-200 ease-out-soft ${
+          className={`rounded-lg px-3 py-1.5 font-bold transition-colors duration-200 ease-out-soft ${
             current === r.key ? 'bg-brand text-white' : 'text-inkMuted hover:text-ink'
           }`}
         >
@@ -108,10 +88,16 @@ export function MetricGrid({ items }: { items: { label: string; value: string; d
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => (
-        <div key={item.label} className="rounded-xl border border-line bg-surface p-5 shadow-card">
-          <p className="text-sm text-inkMuted">{item.label}</p>
-          <p className="mt-2 font-display text-3xl text-ink">{item.value}</p>
-          {item.delta && <p className="mt-2 text-xs text-brand">{item.delta}</p>}
+        <div key={item.label} className="rounded-2xl border border-line bg-surface p-5">
+          <p className="text-sm font-bold text-inkMuted">{item.label}</p>
+          <div className="mt-5 flex items-end justify-between gap-3">
+            <p className="text-[32px] font-bold leading-none tracking-[-0.04em] text-ink">
+              {item.value}
+            </p>
+            {item.delta && (
+              <p className="max-w-[112px] text-right text-sm leading-5 text-inkMuted">{item.delta}</p>
+            )}
+          </div>
         </div>
       ))}
     </div>
@@ -128,9 +114,9 @@ export function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-line bg-surface shadow-card">
-      <div className="flex items-center justify-between border-b border-line px-6 py-4">
-        <h2 className="font-medium text-ink">{title}</h2>
+    <section className="overflow-hidden rounded-2xl border border-line bg-surface">
+      <div className="flex min-h-[68px] items-center justify-between gap-4 border-b border-line px-6 py-3">
+        <h2 className="text-lg font-bold text-ink">{title}</h2>
         {action}
       </div>
       <div className="p-6">{children}</div>
@@ -140,21 +126,21 @@ export function Panel({
 
 export function StatusPill({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    Activa: 'bg-emerald-50 text-emerald-700',
-    Activo: 'bg-emerald-50 text-emerald-700',
-    Confirmada: 'bg-emerald-50 text-emerald-700',
-    Pendiente: 'bg-amber-50 text-amber-700',
-    Solicitada: 'bg-sky-50 text-sky-700',
-    Revisión: 'bg-amber-50 text-amber-700',
-    Invitada: 'bg-violet-50 text-violet-700',
-    Invitado: 'bg-violet-50 text-violet-700',
-    'En sala': 'bg-brand-light text-brand-dark',
-    Media: 'bg-amber-50 text-amber-700',
-    Baja: 'bg-sky-50 text-sky-700',
+    Activa: 'bg-emerald-50 text-[#176151]',
+    Activo: 'bg-emerald-50 text-[#176151]',
+    Confirmada: 'bg-emerald-50 text-[#176151]',
+    Pendiente: 'bg-amber-50 text-[#8a5e16]',
+    Solicitada: 'bg-amber-50 text-[#8a5e16]',
+    Revisión: 'bg-amber-50 text-[#8a5e16]',
+    Invitada: 'bg-amber-50 text-[#8a5e16]',
+    Invitado: 'bg-amber-50 text-[#8a5e16]',
+    'En sala': 'bg-brand-light text-brand-mid',
+    Media: 'bg-amber-50 text-[#8a5e16]',
+    Baja: 'bg-emerald-50 text-[#176151]',
   };
 
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status] ?? 'bg-canvas text-inkMuted'}`}>
+    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${styles[status] ?? 'bg-canvas text-inkMuted'}`}>
       {status}
     </span>
   );
@@ -185,7 +171,7 @@ export function BarChart({
               return (
                 <div
                   key={k.key}
-                  className={`${k.color} rounded-full transition-all duration-300 ease-out-quart`}
+                  className={`${k.color} transition-all duration-300 ease-out-soft`}
                   style={{ width: `${width}%` }}
                   title={`${k.label}: ${val}`}
                 />
@@ -220,8 +206,8 @@ export function TimelineItem({
   return (
     <div className="flex gap-4 border-l-2 border-brand-soft pl-5 pb-6 last:pb-0">
       <div className="flex-1">
-        <p className="text-xs font-medium text-brand">{time}</p>
-        <p className="mt-1 font-medium text-ink">{title}</p>
+        <p className="text-xs font-bold text-brand-mid">{time}</p>
+        <p className="mt-1 font-bold text-ink">{title}</p>
         <p className="mt-0.5 text-sm text-inkMuted">{meta}</p>
       </div>
       {status && <StatusPill status={status} />}

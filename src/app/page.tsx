@@ -3,7 +3,7 @@ import { ArchitectureMap } from '@/components/demo/architecture-map';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-canvas grain">
+    <div className="min-h-screen bg-canvas">
       {/* Nav */}
       <header className="border-b border-line/60 bg-surface/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -14,7 +14,7 @@ export default function Home() {
             <Link href="/login" className="text-inkMuted hover:text-ink">Acceso</Link>
             <Link
               href="/demo/admin"
-              className="rounded-full bg-brand px-4 py-2 text-sm font-medium text-white transition duration-200 ease-out-soft hover:bg-brand-dark"
+              className="rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white transition duration-200 ease-out-soft hover:bg-brand-dark"
             >
               Explorar plataforma
             </Link>
@@ -39,13 +39,13 @@ export default function Home() {
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="/demo/patient"
-                className="rounded-full bg-brand px-6 py-3 text-sm font-medium text-white shadow-lift transition duration-200 ease-out-soft hover:bg-brand-dark"
+                className="rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white shadow-lift transition duration-200 ease-out-soft hover:bg-brand-dark"
               >
                 Entrar como paciente
               </Link>
               <Link
                 href="/demo/admin"
-                className="rounded-full border border-line bg-surface px-6 py-3 text-sm font-medium text-ink transition duration-200 ease-out-soft hover:border-brand/40"
+                className="rounded-xl border border-line bg-surface px-6 py-3 text-sm font-medium text-ink transition duration-200 ease-out-soft hover:border-brand/40"
               >
                 Ver panel administrativo
               </Link>
@@ -54,7 +54,7 @@ export default function Home() {
 
           {/* Visual preview card */}
           <div className="relative">
-            <div className="rounded-xl border border-line bg-surface p-6 shadow-lift">
+            <div className="rounded-2xl border border-line bg-surface p-6 shadow-lift">
               <div className="flex items-center gap-2 border-b border-line pb-4">
                 <div className="h-3 w-3 rounded-full bg-role-spec" />
                 <div className="h-3 w-3 rounded-full bg-role-org" />
@@ -72,7 +72,7 @@ export default function Home() {
                       <span className="text-xs font-medium text-brand">{row.t}</span>
                       <p className="text-sm font-medium text-ink">{row.p}</p>
                     </div>
-                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs text-emerald-700">
+                    <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-[#176151]">
                       {row.s}
                     </span>
                   </div>
@@ -105,7 +105,7 @@ export default function Home() {
             <Link
               key={card.href}
               href={card.href}
-              className="group flex flex-col rounded-xl border border-line bg-surface p-5 shadow-card transition duration-200 ease-out-quart hover:-translate-y-0.5 hover:border-brand/30"
+              className="group flex flex-col rounded-2xl border border-line bg-surface p-5 transition duration-200 ease-out-quart hover:-translate-y-0.5 hover:border-brand/30"
             >
               <div className="flex items-center justify-between">
                 <div className={`h-1.5 w-8 rounded-full ${card.color}`} />
