@@ -28,11 +28,13 @@ const config: Config = {
         surface: '#ffffff',
         line: '#d7e1db',
         lineStrong: '#cbd4ce',
+        // Acentos por rol, separados en tono para distinguirse entre sí y del
+        // rojo de acción destructiva.
         role: {
           admin: '#5b4b8a',
           org: '#2a6f97',
           spec: '#1b7a5a',
-          patient: '#b86b25',
+          patient: '#8f4a68',
         },
       },
       fontFamily: {

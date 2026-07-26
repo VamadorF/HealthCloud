@@ -29,6 +29,18 @@ body {
   }
 }
 
+/* Región resaltada por la guía guiada: halo separado del fondo por un
+   anillo del color del lienzo, para que se lea sobre cualquier tarjeta. */
+.tour-highlight {
+  position: relative;
+  z-index: 30;
+  border-radius: 1rem;
+  box-shadow:
+    0 0 0 2px #f5f6f3,
+    0 0 0 6px rgba(140, 195, 170, 0.7);
+  transition: box-shadow 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 /* Preferencias de accesibilidad: la escala en :root reajusta todo lo que
    está expresado en rem (tipografía y espaciado). */
 :root[data-text-size='large'] {

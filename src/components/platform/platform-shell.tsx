@@ -3,6 +3,8 @@ import { User, UserRole } from '@prisma/client';
 import { getRoleLabel, getRoleNav } from '@/lib/auth/navigation';
 import { PillNav, LocationCrumb } from '@/components/platform/sidebar-nav';
 import { AccessibilityControls } from '@/components/platform/accessibility';
+import { GuidedTour } from '@/components/platform/guided-tour';
+import { getTourRole } from '@/lib/tour/steps';
 
 const ROLE_CONTEXT: Record<UserRole, string> = {
   ADMIN: 'Panel maestro de administración',
@@ -24,7 +26,7 @@ export function PlatformShell({ user, title, description, children }: PlatformSh
   return (
     <div className="min-h-screen bg-canvas">
       {/* Cabecera */}
-      <header className="border-b border-lineStrong">
+      <header data-tour="header" className="border-b border-lineStrong">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div>
             <Link href="/" className="font-display text-lg text-ink">
@@ -35,6 +37,7 @@ export function PlatformShell({ user, title, description, children }: PlatformSh
           <div className="text-sm text-inkMuted sm:text-right">
             <p>{user.fullName ?? user.email}</p>
             <div className="mt-1 flex flex-wrap items-center gap-3 sm:justify-end">
+              <GuidedTour role={getTourRole(user.role)} roleLabel={getRoleLabel(user.role)} />
               <AccessibilityControls />
               <Link
                 href="/profile"
@@ -57,7 +60,7 @@ export function PlatformShell({ user, title, description, children }: PlatformSh
 
       <main className="mx-auto max-w-[1600px] px-5 py-9 sm:px-8">
         {/* Tarjeta hero: ubicación, título y navegación por secciones */}
-        <div className="rounded-2xl border border-line bg-surface px-6 py-6 sm:px-8">
+        <div data-tour="nav" className="rounded-2xl border border-line bg-surface px-6 py-6 sm:px-8">
           <LocationCrumb roleLabel={getRoleLabel(user.role)} items={nav} />
           <h1 className="mt-2 font-display text-3xl text-ink sm:text-[34px]">{title}</h1>
           {description && (
@@ -66,7 +69,9 @@ export function PlatformShell({ user, title, description, children }: PlatformSh
           <PillNav items={nav} />
         </div>
 
-        <div className="mt-6">{children}</div>
+        <div data-tour="content" className="mt-6">
+          {children}
+        </div>
       </main>
     </div>
   );
@@ -148,7 +153,7 @@ export function RoleBadge({ role }: RoleBadgeProps) {
 
   return (
     <span
-      className={`inline-flex shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${colors[role]}`}
+      className={`inline-flex h-fit shrink-0 self-start whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${colors[role]}`}
     >
       {getRoleLabel(role)}
     </span>
@@ -200,7 +205,7 @@ const STATUS_LABELS: Record<string, string> = {
 export function StatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${
+      className={`inline-flex h-fit shrink-0 self-start whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${
         STATUS_TONES[status] ?? 'bg-canvas text-inkMuted'
       }`}
     >

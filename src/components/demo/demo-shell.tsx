@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { DemoRole, DEMO_NAV, DEMO_USERS } from '@/lib/mock/demo-data';
 import { PillNav, LocationCrumb } from '@/components/platform/sidebar-nav';
 import { AccessibilityControls } from '@/components/platform/accessibility';
+import { GuidedTour } from '@/components/platform/guided-tour';
 
 interface DemoShellProps {
   role: DemoRole;
@@ -24,7 +25,7 @@ export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
   return (
     <div className="min-h-screen bg-canvas">
       {/* Cabecera */}
-      <header className="border-b border-lineStrong">
+      <header data-tour="header" className="border-b border-lineStrong">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div>
             <Link href="/" className="font-display text-lg text-ink">
@@ -39,6 +40,7 @@ export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
               <p className="text-sm text-inkMuted">
                 {user.name} · {user.context}
               </p>
+              <GuidedTour role={role} roleLabel={user.roleLabel} />
               <AccessibilityControls />
             </div>
             <RoleSwitcher current={role} />
@@ -48,7 +50,7 @@ export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
 
       <main className="mx-auto max-w-[1600px] px-5 py-9 sm:px-8">
         {/* Tarjeta hero: ubicación, título y navegación por secciones */}
-        <div className="rounded-2xl border border-line bg-surface px-6 py-6 sm:px-8">
+        <div data-tour="nav" className="rounded-2xl border border-line bg-surface px-6 py-6 sm:px-8">
           <LocationCrumb roleLabel={user.roleLabel} items={nav} />
           <h1 className="mt-2 font-display text-3xl text-ink sm:text-[34px]">{title}</h1>
           {subtitle && (
@@ -57,7 +59,9 @@ export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
           <PillNav items={nav} />
         </div>
 
-        <div className="mt-6">{children}</div>
+        <div data-tour="content" className="mt-6">
+          {children}
+        </div>
       </main>
     </div>
   );
@@ -151,7 +155,7 @@ export function StatusPill({ status }: { status: string }) {
 
   return (
     <span
-      className={`inline-flex shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${
+      className={`inline-flex h-fit shrink-0 self-start whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${
         styles[status] ?? 'bg-canvas text-inkMuted'
       }`}
     >
