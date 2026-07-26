@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { DemoRole, DEMO_NAV, DEMO_USERS } from '@/lib/mock/demo-data';
 import { PillNav, LocationCrumb } from '@/components/platform/sidebar-nav';
+import { AccessibilityControls } from '@/components/platform/accessibility';
 
 interface DemoShellProps {
   role: DemoRole;
@@ -34,9 +35,12 @@ export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:items-end">
-            <p className="text-sm text-inkMuted">
-              {user.name} · {user.context}
-            </p>
+            <div className="flex flex-wrap items-center gap-3 sm:justify-end">
+              <p className="text-sm text-inkMuted">
+                {user.name} · {user.context}
+              </p>
+              <AccessibilityControls />
+            </div>
             <RoleSwitcher current={role} />
           </div>
         </div>
@@ -107,10 +111,13 @@ export function MetricGrid({ items }: { items: { label: string; value: string; d
 export function Panel({
   title,
   action,
+  flush = false,
   children,
 }: {
   title: string;
   action?: React.ReactNode;
+  /** Contenido a sangre, sin relleno: para tablas y listas con divisores. */
+  flush?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -119,7 +126,7 @@ export function Panel({
         <h2 className="text-lg font-bold text-ink">{title}</h2>
         {action}
       </div>
-      <div className="p-6">{children}</div>
+      {flush ? children : <div className="p-6">{children}</div>}
     </section>
   );
 }
@@ -137,10 +144,17 @@ export function StatusPill({ status }: { status: string }) {
     'En sala': 'bg-brand-light text-brand-mid',
     Media: 'bg-amber-50 text-[#8a5e16]',
     Baja: 'bg-emerald-50 text-[#176151]',
+    Seguimiento: 'bg-emerald-50 text-[#176151]',
+    Crónico: 'bg-amber-50 text-[#8a5e16]',
+    Nuevo: 'bg-brand-light text-brand-mid',
   };
 
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${styles[status] ?? 'bg-canvas text-inkMuted'}`}>
+    <span
+      className={`inline-flex shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${
+        styles[status] ?? 'bg-canvas text-inkMuted'
+      }`}
+    >
       {status}
     </span>
   );

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { User, UserRole } from '@prisma/client';
 import { getRoleLabel, getRoleNav } from '@/lib/auth/navigation';
 import { PillNav, LocationCrumb } from '@/components/platform/sidebar-nav';
+import { AccessibilityControls } from '@/components/platform/accessibility';
 
 const ROLE_CONTEXT: Record<UserRole, string> = {
   ADMIN: 'Panel maestro de administración',
@@ -33,7 +34,8 @@ export function PlatformShell({ user, title, description, children }: PlatformSh
           </div>
           <div className="text-sm text-inkMuted sm:text-right">
             <p>{user.fullName ?? user.email}</p>
-            <div className="mt-1 flex items-center gap-4 sm:justify-end">
+            <div className="mt-1 flex flex-wrap items-center gap-3 sm:justify-end">
+              <AccessibilityControls />
               <Link
                 href="/profile"
                 className="font-bold text-brand-mid transition-colors duration-200 ease-out-soft hover:text-ink"
@@ -145,7 +147,9 @@ export function RoleBadge({ role }: RoleBadgeProps) {
   };
 
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${colors[role]}`}>
+    <span
+      className={`inline-flex shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${colors[role]}`}
+    >
       {getRoleLabel(role)}
     </span>
   );
@@ -196,12 +200,61 @@ const STATUS_LABELS: Record<string, string> = {
 export function StatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${
+      className={`inline-flex shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${
         STATUS_TONES[status] ?? 'bg-canvas text-inkMuted'
       }`}
     >
       {STATUS_LABELS[status] ?? status}
     </span>
+  );
+}
+
+/**
+ * Tabla de datos del prototipo: cabecera sobre fondo tenue, filas con
+ * divisores y hover sutil. La primera columna va en negrita como ancla
+ * de lectura; el resto en tono secundario.
+ */
+export function DataTable({
+  headers,
+  rows,
+  empty,
+}: {
+  headers: string[];
+  rows: { key: string; cells: React.ReactNode[] }[];
+  empty: string;
+}) {
+  if (rows.length === 0) {
+    return <p className="px-6 py-10 text-center text-sm text-inkMuted">{empty}</p>;
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[660px] text-left">
+        <thead className="bg-[#f7f9f7] text-sm text-inkMuted">
+          <tr>
+            {headers.map((header) => (
+              <th key={header} className="px-6 py-3.5 font-bold">
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-line">
+          {rows.map((row) => (
+            <tr key={row.key} className="transition-colors duration-200 ease-out-soft hover:bg-[#fafbfa]">
+              {row.cells.map((cell, index) => (
+                <td
+                  key={index}
+                  className={`px-6 py-4 text-sm ${index === 0 ? 'font-bold text-ink' : 'text-inkMuted'}`}
+                >
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

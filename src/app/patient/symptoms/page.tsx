@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
-import { PlatformShell, StatusBadge, EmptyState } from '@/components/platform/platform-shell';
+import { PlatformShell, StatusBadge, Panel, DataTable } from '@/components/platform/platform-shell';
 import { reportSymptoms } from '@/app/patient/actions';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Input } from '@/components/ui/input';
@@ -22,10 +22,9 @@ export default async function PatientSymptomsPage() {
       title="Registrar síntomas"
       description="Reporta síntomas visuales, de urgencia o emergencias"
     >
-      <form
-        action={reportSymptoms}
-        className="mb-8 grid max-w-2xl gap-4 rounded-2xl border border-line bg-surface p-6"
-      >
+      <div className="grid items-start gap-5 xl:grid-cols-[0.9fr_1.4fr]">
+      <Panel title="Nuevo reporte">
+      <form action={reportSymptoms} className="grid gap-4 px-6 py-5">
         <Textarea
           id="description"
           name="description"
@@ -64,24 +63,25 @@ export default async function PatientSymptomsPage() {
           <SubmitButton>Enviar reporte</SubmitButton>
         </div>
       </form>
+      </Panel>
 
-      <div className="space-y-4">
-        <h2 className="text-lg font-medium text-ink">Reportes anteriores</h2>
-        {reports.map((report) => (
-          <div
-            key={report.id}
-            className="rounded-2xl border border-line bg-surface p-5"
-          >
-            <div className="flex items-center gap-2">
-              <StatusBadge status={report.isEmergency ? 'EMERGENCY' : report.urgencyLevel} />
-              <span className="text-xs text-inkMuted">{formatDateTime(report.createdAt)}</span>
-            </div>
-            <p className="mt-2 text-sm text-ink">{report.description}</p>
-          </div>
-        ))}
-        {reports.length === 0 && (
-          <EmptyState>No has registrado síntomas aún.</EmptyState>
-        )}
+      <Panel title="Reportes anteriores">
+        <DataTable
+          headers={['Fecha', 'Descripción', 'Urgencia']}
+          empty="No has registrado síntomas aún."
+          rows={reports.map((report) => ({
+            key: report.id,
+            cells: [
+              formatDateTime(report.createdAt),
+              report.description,
+              <StatusBadge
+                key="status"
+                status={report.isEmergency ? 'EMERGENCY' : report.urgencyLevel}
+              />,
+            ],
+          }))}
+        />
+      </Panel>
       </div>
     </PlatformShell>
   );

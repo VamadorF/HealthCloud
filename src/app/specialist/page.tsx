@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
-import { PlatformShell, StatCard, StatusBadge, Panel, Row } from '@/components/platform/platform-shell';
+import { PlatformShell, StatCard, StatusBadge, Panel, DataTable } from '@/components/platform/platform-shell';
 import { formatDateTime } from '@/utils/format';
 import { confirmAppointment } from '@/app/specialist/actions';
 import { SubmitButton } from '@/components/ui/submit-button';
@@ -28,38 +28,35 @@ export default async function SpecialistDashboardPage() {
       title="Agenda operativa"
       description="Revisa tu agenda, atiende pacientes y registra consultas"
     >
-      <div className="mb-5 grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Citas pendientes" value={pending} hint="Por confirmar" />
         <StatCard label="Citas hoy" value={today} />
         <StatCard label="Total en agenda" value={appointments.length} />
       </div>
 
-      <Panel title="Próximas atenciones">
-        {appointments.map((appt) => (
-          <Row
-            key={appt.id}
-            className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="font-bold text-ink">{appt.patient.fullName ?? appt.patient.email}</p>
-                <StatusBadge status={appt.status} />
-              </div>
-              <p className="mt-1 text-sm text-inkMuted">{formatDateTime(appt.scheduledAt)}</p>
-              <p className="text-sm text-inkMuted">{appt.reason}</p>
-            </div>
-            {appt.status === 'REQUESTED' && (
-              <form action={confirmAppointment}>
-                <input type="hidden" name="appointmentId" value={appt.id} />
-                <SubmitButton size="sm">Confirmar</SubmitButton>
-              </form>
-            )}
-          </Row>
-        ))}
-        {appointments.length === 0 && (
-          <p className="px-6 py-8 text-center text-sm text-inkMuted">No tienes citas programadas.</p>
-        )}
-      </Panel>
+      <div className="mt-5">
+        <Panel title="Próximas atenciones">
+          <DataTable
+            headers={['Paciente', 'Fecha y hora', 'Motivo', 'Estado', '']}
+            empty="No tienes citas programadas."
+            rows={appointments.map((appt) => ({
+              key: appt.id,
+              cells: [
+                appt.patient.fullName ?? appt.patient.email,
+                formatDateTime(appt.scheduledAt),
+                appt.reason,
+                <StatusBadge key="status" status={appt.status} />,
+                appt.status === 'REQUESTED' ? (
+                  <form key="action" action={confirmAppointment} className="flex justify-end">
+                    <input type="hidden" name="appointmentId" value={appt.id} />
+                    <SubmitButton size="sm">Confirmar</SubmitButton>
+                  </form>
+                ) : null,
+              ],
+            }))}
+          />
+        </Panel>
+      </div>
     </PlatformShell>
   );
 }

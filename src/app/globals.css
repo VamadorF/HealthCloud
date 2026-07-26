@@ -28,3 +28,26 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Preferencias de accesibilidad: la escala en :root reajusta todo lo que
+   está expresado en rem (tipografía y espaciado). */
+:root[data-text-size='large'] {
+  font-size: 112.5%;
+}
+
+:root[data-text-size='xlarge'] {
+  font-size: 125%;
+}
+
+:root[data-contrast='on'] {
+  --foreground: #10201d;
+}
+
+:root[data-contrast='on'] .text-inkMuted {
+  color: #33453f;
+}
+
+:root[data-contrast='on'] .border-line,
+:root[data-contrast='on'] .divide-line > * + * {
+  border-color: #8fa39a;
+}
