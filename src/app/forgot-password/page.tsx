@@ -9,7 +9,7 @@ export default function ForgotPasswordPage() {
       description="Te enviaremos un enlace para restablecer tu contraseña"
       footer={
         <p>
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/login" className="font-medium text-brand hover:text-brand-dark">
             Volver a iniciar sesión
           </Link>
         </p>

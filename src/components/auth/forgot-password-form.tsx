@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { emailSchema } from '@/utils/validation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
@@ -43,11 +44,11 @@ export function ForgotPasswordForm() {
 
   if (success) {
     return (
-      <div className="rounded-md bg-green-50 dark:bg-green-900/20 p-4 text-center">
-        <p className="text-sm text-green-800 dark:text-green-300">
+      <div className="space-y-4 text-center">
+        <Alert tone="success">
           Si el correo existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña.
-        </p>
-        <Link href="/login" className="mt-4 inline-block text-sm font-medium text-blue-600">
+        </Alert>
+        <Link href="/login" className="inline-block text-sm font-medium text-brand hover:text-brand-dark">
           Volver a iniciar sesión
         </Link>
       </div>
@@ -55,7 +56,7 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         id="email"
         label="Email"
@@ -66,18 +67,14 @@ export function ForgotPasswordForm() {
         placeholder="tu@email.com"
       />
 
-      {error && (
-        <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-          <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
-        </div>
-      )}
+      {error && <Alert>{error}</Alert>}
 
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? 'Enviando...' : 'Enviar enlace de recuperación'}
+      <Button type="submit" loading={loading} className="w-full">
+        Enviar enlace de recuperación
       </Button>
 
       <p className="text-center text-sm">
-        <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+        <Link href="/login" className="font-medium text-brand hover:text-brand-dark">
           Volver a iniciar sesión
         </Link>
       </p>

@@ -1,9 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
-import { PlatformShell } from '@/components/platform/platform-shell';
+import { PlatformShell, StatusBadge, Panel, DataTable } from '@/components/platform/platform-shell';
 import { reportSymptoms } from '@/app/patient/actions';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { formatDateTime } from '@/utils/format';
 
 export default async function PatientSymptomsPage() {
@@ -20,34 +22,23 @@ export default async function PatientSymptomsPage() {
       title="Registrar síntomas"
       description="Reporta síntomas visuales, de urgencia o emergencias"
     >
-      <form
-        action={reportSymptoms}
-        className="mb-8 grid max-w-2xl gap-4 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
-      >
-        <div>
-          <label htmlFor="description" className="mb-2 block text-sm font-medium">Descripción</label>
-          <textarea
-            id="description"
-            name="description"
-            required
-            rows={4}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
-            placeholder="Describe tus síntomas..."
-          />
-        </div>
-        <div>
-          <label htmlFor="urgencyLevel" className="mb-2 block text-sm font-medium">Nivel de urgencia</label>
-          <select
-            id="urgencyLevel"
-            name="urgencyLevel"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
-          >
-            <option value="LOW">Baja</option>
-            <option value="MEDIUM">Media</option>
-            <option value="HIGH">Alta</option>
-            <option value="EMERGENCY">Emergencia</option>
-          </select>
-        </div>
+      <div className="grid items-start gap-5 xl:grid-cols-[0.9fr_1.4fr]">
+      <Panel title="Nuevo reporte">
+      <form action={reportSymptoms} className="grid gap-4 px-6 py-5">
+        <Textarea
+          id="description"
+          name="description"
+          label="Descripción"
+          required
+          rows={4}
+          placeholder="Describe tus síntomas..."
+        />
+        <Select id="urgencyLevel" name="urgencyLevel" label="Nivel de urgencia">
+          <option value="LOW">Baja</option>
+          <option value="MEDIUM">Media</option>
+          <option value="HIGH">Alta</option>
+          <option value="EMERGENCY">Emergencia</option>
+        </Select>
         <Input name="duration" label="Duración" placeholder="2 días" />
         <Input
           name="bodyAreas"
@@ -59,34 +50,38 @@ export default async function PatientSymptomsPage() {
           label="Síntomas visuales (JSON)"
           defaultValue='{"erupcion":false,"inflamacion":true}'
         />
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="isEmergency" value="true" />
+        <label className="flex items-center gap-2 text-sm text-ink">
+          <input
+            type="checkbox"
+            name="isEmergency"
+            value="true"
+            className="h-4 w-4 rounded border-line text-brand focus:ring-brand/30"
+          />
           Marcar como emergencia
         </label>
-        <Button type="submit">Enviar reporte</Button>
+        <div>
+          <SubmitButton>Enviar reporte</SubmitButton>
+        </div>
       </form>
+      </Panel>
 
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Reportes anteriores</h2>
-        {reports.map((report) => (
-          <div
-            key={report.id}
-            className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-          >
-            <div className="flex items-center gap-2">
-              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                report.isEmergency ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
-              }`}>
-                {report.urgencyLevel}
-              </span>
-              <span className="text-xs text-gray-400">{formatDateTime(report.createdAt)}</span>
-            </div>
-            <p className="mt-2 text-sm">{report.description}</p>
-          </div>
-        ))}
-        {reports.length === 0 && (
-          <p className="text-gray-500">No has registrado síntomas aún.</p>
-        )}
+      <Panel title="Reportes anteriores">
+        <DataTable
+          headers={['Fecha', 'Descripción', 'Urgencia']}
+          empty="No has registrado síntomas aún."
+          rows={reports.map((report) => ({
+            key: report.id,
+            cells: [
+              formatDateTime(report.createdAt),
+              report.description,
+              <StatusBadge
+                key="status"
+                status={report.isEmergency ? 'EMERGENCY' : report.urgencyLevel}
+              />,
+            ],
+          }))}
+        />
+      </Panel>
       </div>
     </PlatformShell>
   );

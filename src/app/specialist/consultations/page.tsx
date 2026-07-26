@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
-import { PlatformShell } from '@/components/platform/platform-shell';
+import { PlatformShell, StatusBadge, EmptyState } from '@/components/platform/platform-shell';
 import { recordConsultation } from '@/app/specialist/actions';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { Input } from '@/components/ui/input';
 import { formatDateTime } from '@/utils/format';
 
@@ -24,19 +24,22 @@ export default async function SpecialistConsultationsPage() {
       title="Consultas clínicas"
       description="Registra diagnósticos, tratamientos y datos clínicos complejos"
     >
-      <div className="space-y-8">
+      <div className="space-y-6">
         {appointments.map((appt) => (
           <div
             key={appt.id}
-            className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
+            className="rounded-2xl border border-line bg-surface p-6"
           >
             <div className="mb-4">
-              <h3 className="font-semibold">{appt.patient.fullName ?? appt.patient.email}</h3>
-              <p className="text-sm text-gray-500">{formatDateTime(appt.scheduledAt)} · {appt.status}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="font-medium text-ink">{appt.patient.fullName ?? appt.patient.email}</h3>
+                <StatusBadge status={appt.status} />
+              </div>
+              <p className="mt-1 text-sm text-inkMuted">{formatDateTime(appt.scheduledAt)}</p>
             </div>
 
             {appt.consultation ? (
-              <div className="rounded-md bg-gray-50 p-4 text-sm dark:bg-gray-900">
+              <div className="rounded-lg bg-canvas p-4 text-sm text-ink">
                 <p><strong>Diagnóstico:</strong> {appt.consultation.diagnosis}</p>
                 <p className="mt-2"><strong>Notas:</strong> {(appt.consultation.clinicalData as { notes?: string })?.notes}</p>
               </div>
@@ -56,14 +59,14 @@ export default async function SpecialistConsultationsPage() {
                   defaultValue='{"medicamentos":[],"indicaciones":""}'
                 />
                 <div className="sm:col-span-2">
-                  <Button type="submit">Registrar consulta</Button>
+                  <SubmitButton>Registrar consulta</SubmitButton>
                 </div>
               </form>
             )}
           </div>
         ))}
         {appointments.length === 0 && (
-          <p className="text-center text-gray-500">No hay consultas para registrar.</p>
+          <EmptyState>No hay consultas para registrar.</EmptyState>
         )}
       </div>
     </PlatformShell>

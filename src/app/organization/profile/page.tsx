@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
 import { PlatformShell } from '@/components/platform/platform-shell';
 import { updateOrganizationProfile } from '@/app/organization/actions';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { Input } from '@/components/ui/input';
 
 export default async function OrganizationProfilePage() {
@@ -20,13 +20,13 @@ export default async function OrganizationProfilePage() {
     >
       <form
         action={updateOrganizationProfile}
-        className="max-w-2xl space-y-4 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
+        className="max-w-2xl space-y-4 rounded-2xl border border-line bg-surface p-6"
       >
         <Input name="name" label="Nombre" required defaultValue={organization?.name ?? ''} />
         <Input name="description" label="Descripción" defaultValue={organization?.description ?? ''} />
         <Input name="address" label="Dirección" defaultValue={organization?.address ?? ''} />
         <Input name="phone" label="Teléfono" defaultValue={organization?.phone ?? ''} />
-        <Button type="submit">Guardar perfil</Button>
+        <SubmitButton>Guardar perfil</SubmitButton>
       </form>
     </PlatformShell>
   );

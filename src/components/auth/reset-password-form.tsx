@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { passwordSchema } from '@/utils/validation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState('');
@@ -49,7 +50,7 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         id="password"
         label="Nueva contraseña"
@@ -69,18 +70,14 @@ export function ResetPasswordForm() {
         placeholder="Repite tu contraseña"
       />
 
-      {error && (
-        <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-          <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
-        </div>
-      )}
+      {error && <Alert>{error}</Alert>}
 
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? 'Actualizando...' : 'Actualizar contraseña'}
+      <Button type="submit" loading={loading} className="w-full">
+        Actualizar contraseña
       </Button>
 
       <p className="text-center text-sm">
-        <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+        <Link href="/login" className="font-medium text-brand hover:text-brand-dark">
           Volver a iniciar sesión
         </Link>
       </p>

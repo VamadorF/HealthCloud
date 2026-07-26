@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
-import { PlatformShell } from '@/components/platform/platform-shell';
+import { PlatformShell, Panel, DataTable, StatusBadge } from '@/components/platform/platform-shell';
 import { inviteOrganization, toggleOrganizationStatus } from '@/app/admin/actions';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { Input } from '@/components/ui/input';
 
 export default async function AdminOrganizationsPage() {
@@ -19,46 +19,39 @@ export default async function AdminOrganizationsPage() {
       title="Organizaciones"
       description="Invita, supervisa y bloquea clínicas o centros médicos"
     >
-      <form action={inviteOrganization} className="mb-8 grid gap-4 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:grid-cols-3">
-        <Input name="email" label="Email del responsable" type="email" required placeholder="clinica@email.com" />
-        <Input name="organizationName" label="Nombre de la organización" required placeholder="Clínica Central" />
-        <div className="flex items-end">
-          <Button type="submit" className="w-full">Invitar organización</Button>
-        </div>
-      </form>
-
-      <div className="space-y-4">
-        {organizations.map((org) => (
-          <div
-            key={org.id}
-            className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold">{org.name}</h3>
-                <span className={`rounded-full px-2 py-0.5 text-xs ${
-                  org.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                  org.status === 'BLOCKED' ? 'bg-red-100 text-red-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {org.status}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-gray-500">{org.owner.email}</p>
-              <p className="text-sm text-gray-400">{org.specialists.length} especialistas vinculados</p>
-            </div>
-            <form action={toggleOrganizationStatus}>
-              <input type="hidden" name="organizationId" value={org.id} />
-              <input type="hidden" name="block" value={String(org.status !== 'BLOCKED')} />
-              <Button type="submit" variant={org.status === 'BLOCKED' ? 'primary' : 'danger'}>
-                {org.status === 'BLOCKED' ? 'Desbloquear' : 'Bloquear'}
-              </Button>
-            </form>
+      <Panel title="Invitar organización">
+        <form action={inviteOrganization} className="grid gap-4 px-6 py-5 sm:grid-cols-3">
+          <Input name="email" label="Email del responsable" type="email" required placeholder="clinica@email.com" />
+          <Input name="organizationName" label="Nombre de la organización" required placeholder="Clínica Central" />
+          <div className="flex items-end">
+            <SubmitButton className="w-full">Invitar organización</SubmitButton>
           </div>
-        ))}
-        {organizations.length === 0 && (
-          <p className="text-center text-gray-500">No hay organizaciones registradas aún.</p>
-        )}
+        </form>
+      </Panel>
+
+      <div className="mt-5">
+        <Panel title="Organizaciones registradas">
+          <DataTable
+            headers={['Organización', 'Responsable', 'Especialistas', 'Estado', '']}
+            empty="No hay organizaciones registradas aún."
+            rows={organizations.map((org) => ({
+              key: org.id,
+              cells: [
+                org.name,
+                org.owner.email,
+                `${org.specialists.length} vinculados`,
+                <StatusBadge key="status" status={org.status} />,
+                <form key="action" action={toggleOrganizationStatus} className="flex justify-end">
+                  <input type="hidden" name="organizationId" value={org.id} />
+                  <input type="hidden" name="block" value={String(org.status !== 'BLOCKED')} />
+                  <SubmitButton size="sm" variant={org.status === 'BLOCKED' ? 'primary' : 'danger'}>
+                    {org.status === 'BLOCKED' ? 'Desbloquear' : 'Bloquear'}
+                  </SubmitButton>
+                </form>,
+              ],
+            }))}
+          />
+        </Panel>
       </div>
     </PlatformShell>
   );

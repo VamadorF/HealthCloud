@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
 import { PlatformShell, StatCard } from '@/components/platform/platform-shell';
 import { recordDailyMetrics } from '@/app/admin/actions';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 import { formatDate } from '@/utils/format';
 
 export default async function AdminReportsPage() {
@@ -22,7 +22,7 @@ export default async function AdminReportsPage() {
       description="Métricas generales de actividad en la plataforma"
     >
       <form action={recordDailyMetrics} className="mb-6">
-        <Button type="submit">Generar reporte del día</Button>
+        <SubmitButton>Generar reporte del día</SubmitButton>
       </form>
 
       {latest && (
@@ -33,10 +33,10 @@ export default async function AdminReportsPage() {
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+      <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-gray-200 dark:border-gray-700">
-            <tr>
+          <thead className="border-b border-line bg-[#f7f9f7]">
+            <tr className="text-sm font-bold text-inkMuted">
               <th className="px-4 py-3">Fecha</th>
               <th className="px-4 py-3">Usuarios</th>
               <th className="px-4 py-3">Activos</th>
@@ -45,9 +45,9 @@ export default async function AdminReportsPage() {
               <th className="px-4 py-3">Organizaciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-inkBody">
             {metrics.map((m) => (
-              <tr key={m.id} className="border-b border-gray-100 dark:border-gray-700">
+              <tr key={m.id} className="border-b border-line/60 last:border-b-0 hover:bg-[#fafbfa]">
                 <td className="px-4 py-3">{formatDate(m.date)}</td>
                 <td className="px-4 py-3">{m.totalUsers}</td>
                 <td className="px-4 py-3">{m.activeUsers}</td>
@@ -59,7 +59,7 @@ export default async function AdminReportsPage() {
           </tbody>
         </table>
         {metrics.length === 0 && (
-          <p className="p-6 text-center text-gray-500">Genera el primer reporte para ver métricas.</p>
+          <p className="p-6 text-center text-inkMuted">Genera el primer reporte para ver métricas.</p>
         )}
       </div>
     </PlatformShell>

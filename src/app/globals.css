@@ -3,15 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --background: #f6f4f0;
-  --foreground: #14212a;
+  --background: #f5f6f3;
+  --foreground: #22312e;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-family: var(--font-atkinson), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* La dirección de arte usa una sola familia (Atkinson Hyperlegible);
+   los títulos se distinguen por peso y tracking apretado. */
+@layer base {
+  .font-display {
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
 }
 
 @layer utilities {
@@ -20,15 +29,37 @@ body {
   }
 }
 
-/* Subtle grain for depth — not "mock", just texture */
-.grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+/* Región resaltada por la guía guiada: halo separado del fondo por un
+   anillo del color del lienzo, para que se lea sobre cualquier tarjeta. */
+.tour-highlight {
+  position: relative;
+  z-index: 30;
+  border-radius: 1rem;
+  box-shadow:
+    0 0 0 2px #f5f6f3,
+    0 0 0 6px rgba(140, 195, 170, 0.7);
+  transition: box-shadow 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.demo-sidebar-link {
-  @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/75 transition hover:bg-white/10 hover:text-white;
+/* Preferencias de accesibilidad: la escala en :root reajusta todo lo que
+   está expresado en rem (tipografía y espaciado). */
+:root[data-text-size='large'] {
+  font-size: 112.5%;
 }
 
-.demo-sidebar-link-active {
-  @apply bg-white/15 text-white font-medium;
+:root[data-text-size='xlarge'] {
+  font-size: 125%;
+}
+
+:root[data-contrast='on'] {
+  --foreground: #10201d;
+}
+
+:root[data-contrast='on'] .text-inkMuted {
+  color: #33453f;
+}
+
+:root[data-contrast='on'] .border-line,
+:root[data-contrast='on'] .divide-line > * + * {
+  border-color: #8fa39a;
 }

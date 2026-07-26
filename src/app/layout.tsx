@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { DM_Sans, Instrument_Serif } from 'next/font/google';
+import { Atkinson_Hyperlegible } from 'next/font/google';
 import './globals.css';
 
-const dmSans = DM_Sans({
+const atkinson = Atkinson_Hyperlegible({
   subsets: ['latin'],
-  variable: '--font-dm-sans',
-});
-
-const instrument = Instrument_Serif({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-instrument',
+  weight: ['400', '700'],
+  variable: '--font-atkinson',
 });
 
 export const metadata: Metadata = {
@@ -24,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${dmSans.variable} ${instrument.variable}`}>
+    <html lang="es" className={atkinson.variable}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

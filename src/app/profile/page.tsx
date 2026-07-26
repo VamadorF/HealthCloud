@@ -31,7 +31,7 @@ export default async function ProfilePage() {
       title="Mi cuenta"
       description="Administra tu información personal y tu avatar"
     >
-      <div className="max-w-2xl rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+      <div className="max-w-2xl rounded-2xl border border-line bg-surface p-6">
         <ProfileForm
           userId={user.supabaseId}
           email={user.email}

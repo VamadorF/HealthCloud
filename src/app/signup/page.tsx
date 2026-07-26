@@ -10,7 +10,7 @@ export default function SignupPage() {
       footer={
         <p>
           ¿Ya tienes cuenta?{' '}
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/login" className="font-medium text-brand hover:text-brand-dark">
             Inicia sesión
           </Link>
         </p>

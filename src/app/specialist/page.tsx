@@ -1,9 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
-import { PlatformShell, StatCard } from '@/components/platform/platform-shell';
+import { PlatformShell, StatCard, StatusBadge, Panel, DataTable } from '@/components/platform/platform-shell';
 import { formatDateTime } from '@/utils/format';
 import { confirmAppointment } from '@/app/specialist/actions';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 export default async function SpecialistDashboardPage() {
   const user = await requireRole('SPECIALIST');
@@ -28,35 +28,34 @@ export default async function SpecialistDashboardPage() {
       title="Agenda operativa"
       description="Revisa tu agenda, atiende pacientes y registra consultas"
     >
-      <div className="mb-8 grid gap-4 sm:grid-cols-3">
-        <StatCard label="Citas pendientes" value={pending} />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard label="Citas pendientes" value={pending} hint="Por confirmar" />
         <StatCard label="Citas hoy" value={today} />
         <StatCard label="Total en agenda" value={appointments.length} />
       </div>
 
-      <div className="space-y-4">
-        {appointments.map((appt) => (
-          <div
-            key={appt.id}
-            className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div>
-              <p className="font-medium">{appt.patient.fullName ?? appt.patient.email}</p>
-              <p className="text-sm text-gray-500">{formatDateTime(appt.scheduledAt)}</p>
-              <p className="text-sm text-gray-400">{appt.reason}</p>
-              <span className="mt-1 inline-block text-xs text-blue-600">{appt.status}</span>
-            </div>
-            {appt.status === 'REQUESTED' && (
-              <form action={confirmAppointment}>
-                <input type="hidden" name="appointmentId" value={appt.id} />
-                <Button type="submit" size="sm">Confirmar</Button>
-              </form>
-            )}
-          </div>
-        ))}
-        {appointments.length === 0 && (
-          <p className="text-center text-gray-500">No tienes citas programadas.</p>
-        )}
+      <div className="mt-5">
+        <Panel title="Próximas atenciones">
+          <DataTable
+            headers={['Paciente', 'Fecha y hora', 'Motivo', 'Estado', '']}
+            empty="No tienes citas programadas."
+            rows={appointments.map((appt) => ({
+              key: appt.id,
+              cells: [
+                appt.patient.fullName ?? appt.patient.email,
+                formatDateTime(appt.scheduledAt),
+                appt.reason,
+                <StatusBadge key="status" status={appt.status} />,
+                appt.status === 'REQUESTED' ? (
+                  <form key="action" action={confirmAppointment} className="flex justify-end">
+                    <input type="hidden" name="appointmentId" value={appt.id} />
+                    <SubmitButton size="sm">Confirmar</SubmitButton>
+                  </form>
+                ) : null,
+              ],
+            }))}
+          />
+        </Panel>
       </div>
     </PlatformShell>
   );

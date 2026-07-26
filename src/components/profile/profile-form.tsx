@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { updateAvatarPath, updateProfile } from '@/app/profile/actions';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 
 interface ProfileFormProps {
   userId: string;
@@ -94,7 +95,7 @@ export function ProfileForm({ userId, email, fullName, avatarUrl }: ProfileFormP
   return (
     <div className="space-y-8">
       <section className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-        <div className="relative h-24 w-24 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+        <div className="relative h-24 w-24 overflow-hidden rounded-full bg-brand-light">
           {previewUrl ? (
             <Image
               src={previewUrl}
@@ -104,13 +105,13 @@ export function ProfileForm({ userId, email, fullName, avatarUrl }: ProfileFormP
               unoptimized
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-gray-500">
+            <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-brand">
               {name.charAt(0).toUpperCase() || email.charAt(0).toUpperCase()}
             </div>
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-inkMuted">
             Sube una imagen JPG, PNG o WebP (máx. 2 MB)
           </p>
           <input
@@ -119,10 +120,10 @@ export function ProfileForm({ userId, email, fullName, avatarUrl }: ProfileFormP
             accept="image/jpeg,image/png,image/webp"
             onChange={handleAvatarChange}
             disabled={isUploading}
-            className="text-sm text-gray-600 file:mr-4 file:rounded-md file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-500"
+            className="text-sm text-inkMuted file:mr-4 file:rounded-xl file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-bold file:text-white file:transition file:duration-200 hover:file:bg-brand-dark disabled:opacity-60"
           />
           {isUploading && (
-            <p className="text-sm text-gray-500">Subiendo avatar...</p>
+            <p className="text-sm text-inkMuted" role="status">Subiendo avatar…</p>
           )}
         </div>
       </section>
@@ -146,20 +147,12 @@ export function ProfileForm({ userId, email, fullName, avatarUrl }: ProfileFormP
           disabled
         />
 
-        {error && (
-          <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-            <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
-          </div>
-        )}
+        {error && <Alert>{error}</Alert>}
 
-        {success && (
-          <div className="rounded-md bg-green-50 dark:bg-green-900/20 p-4">
-            <p className="text-sm text-green-800 dark:text-green-300">{success}</p>
-          </div>
-        )}
+        {success && <Alert tone="success">{success}</Alert>}
 
-        <Button type="submit" disabled={isPending}>
-          {isPending ? 'Guardando...' : 'Guardar cambios'}
+        <Button type="submit" loading={isPending}>
+          Guardar cambios
         </Button>
       </form>
     </div>

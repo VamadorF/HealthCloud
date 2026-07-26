@@ -129,7 +129,7 @@ export const ARCHITECTURE_LAYERS = [
   {
     title: 'Capa de aplicación',
     items: ['Server Actions', 'RBAC por rol', 'Validación Zod'],
-    color: 'bg-accent-soft border-accent/20',
+    color: 'bg-brand-light border-brand-soft',
   },
   {
     title: 'Capa de datos',

@@ -9,35 +9,46 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: '#f6f4f0',
-        ink: '#14212a',
-        inkMuted: '#5c6b76',
+        canvas: '#f5f6f3',
+        ink: '#173f3b',
+        inkBody: '#22312e',
+        inkMuted: '#5c736b',
         brand: {
-          DEFAULT: '#0e5e63',
-          dark: '#0a4549',
-          light: '#e8f3f4',
-          soft: '#c5e4e6',
+          DEFAULT: '#154d45',
+          dark: '#103f39',
+          mid: '#277166',
+          light: '#edf4ef',
+          soft: '#d8e9df',
         },
         accent: {
-          DEFAULT: '#c45c3e',
-          soft: '#f9ebe6',
+          DEFAULT: '#9d3030',
+          dark: '#822626',
+          soft: '#fdf0f0',
         },
         surface: '#ffffff',
-        line: '#e2ddd4',
+        line: '#d7e1db',
+        lineStrong: '#cbd4ce',
+        // Acentos por rol, separados en tono para distinguirse entre sí y del
+        // rojo de acción destructiva.
         role: {
           admin: '#5b4b8a',
           org: '#2a6f97',
           spec: '#1b7a5a',
-          patient: '#b86b25',
+          patient: '#8f4a68',
         },
       },
       fontFamily: {
-        sans: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-instrument)', 'Georgia', 'serif'],
+        sans: ['var(--font-atkinson)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-atkinson)', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        card: '0 1px 2px rgba(20,33,42,0.04), 0 8px 24px rgba(20,33,42,0.06)',
-        lift: '0 12px 40px rgba(20,33,42,0.10)',
+        card: '0 1px 2px rgba(23,63,59,0.03)',
+        lift: '0 18px 50px rgba(24,61,53,0.2)',
+      },
+      // Curva de easing del prototipo: se usa en hovers, lifts y transiciones.
+      transitionTimingFunction: {
+        'out-soft': 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+        'out-quart': 'cubic-bezier(0.25, 1, 0.5, 1)',
       },
     },
   },

@@ -5,33 +5,31 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
+// Campos rectos, sin radio: parte de la dirección de arte del prototipo.
+export const fieldStyles =
+  'w-full border border-lineStrong bg-surface px-3 py-2.5 text-sm text-inkBody placeholder:text-inkMuted/60 outline-none transition-colors duration-200 ease-out-soft focus:border-brand-mid focus:ring-2 focus:ring-brand-soft disabled:cursor-not-allowed disabled:bg-canvas disabled:opacity-70';
+
+export const fieldErrorStyles = 'border-accent focus:border-accent focus:ring-accent-soft';
+
+export function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
+  return (
+    <label className="mb-2 block text-xs font-bold text-inkMuted" htmlFor={htmlFor}>
+      {children}
+    </label>
+  );
+}
+
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className = '', label, error, ...props }, ref) => {
     return (
       <div className="w-full">
-        {label && (
-          <label className="block text-sm font-medium mb-2" htmlFor={props.id}>
-            {label}
-          </label>
-        )}
+        {label && <FieldLabel htmlFor={props.id}>{label}</FieldLabel>}
         <input
           ref={ref}
-          className={`
-            w-full rounded-md border px-3 py-2 text-sm
-            border-gray-300 dark:border-gray-700
-            bg-white dark:bg-gray-800
-            text-gray-900 dark:text-gray-100
-            placeholder:text-gray-400 dark:placeholder:text-gray-500
-            focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent
-            disabled:cursor-not-allowed disabled:opacity-50
-            ${error ? 'border-red-500 focus:ring-red-600' : ''}
-            ${className}
-          `}
+          className={`${fieldStyles} ${error ? fieldErrorStyles : ''} ${className}`}
           {...props}
         />
-        {error && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
-        )}
+        {error && <p className="mt-1.5 text-sm text-accent">{error}</p>}
       </div>
     );
   }

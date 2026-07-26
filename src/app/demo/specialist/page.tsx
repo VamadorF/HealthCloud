@@ -39,7 +39,7 @@ export default function DemoSpecialistPage() {
             <p className="text-xs font-medium text-brand">Ahora · 09:45</p>
             <p className="mt-2 font-display text-xl text-ink">Roberto Díaz</p>
             <p className="mt-1 text-sm text-inkMuted">Seguimiento diabetes · En sala de espera</p>
-            <button className="mt-5 rounded-full bg-brand px-5 py-2 text-sm font-medium text-white">
+            <button className="mt-5 rounded-xl bg-brand px-5 py-2 text-sm font-medium text-white">
               Iniciar consulta
             </button>
           </div>

@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { signupSchema } from '@/utils/validation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 
 export function SignupForm() {
   const [fullName, setFullName] = useState('');
@@ -60,11 +61,11 @@ export function SignupForm() {
 
   if (success) {
     return (
-      <div className="rounded-md bg-green-50 dark:bg-green-900/20 p-4 text-center">
-        <p className="text-sm text-green-800 dark:text-green-300">
+      <div className="space-y-4 text-center">
+        <Alert tone="success">
           Cuenta creada. Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.
-        </p>
-        <Link href="/login" className="mt-4 inline-block text-sm font-medium text-blue-600">
+        </Alert>
+        <Link href="/login" className="inline-block text-sm font-medium text-brand hover:text-brand-dark">
           Ir a iniciar sesión
         </Link>
       </div>
@@ -72,7 +73,7 @@ export function SignupForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         id="fullName"
         label="Nombre completo"
@@ -80,7 +81,7 @@ export function SignupForm() {
         required
         value={fullName}
         onChange={(e) => setFullName(e.target.value)}
-        placeholder="Juan Pérez"
+        placeholder="Nombre y apellido"
       />
       <Input
         id="email"
@@ -110,19 +111,15 @@ export function SignupForm() {
         placeholder="Repite tu contraseña"
       />
 
-      {error && (
-        <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-          <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
-        </div>
-      )}
+      {error && <Alert>{error}</Alert>}
 
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+      <Button type="submit" loading={loading} className="w-full">
+        Crear cuenta
       </Button>
 
-      <p className="text-center text-sm">
+      <p className="text-center text-sm text-inkMuted">
         ¿Ya tienes cuenta?{' '}
-        <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+        <Link href="/login" className="font-medium text-brand hover:text-brand-dark">
           Inicia sesión
         </Link>
       </p>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
 import { PlatformShell, StatCard } from '@/components/platform/platform-shell';
@@ -19,25 +20,39 @@ export default async function PatientDashboardPage() {
       title="Panel del Paciente"
       description="Solicita atención, registra síntomas y consulta tu historial médico"
     >
-      <div className="grid gap-4 sm:grid-cols-3">
+      {/* Acciones primero: es lo que el paciente viene a hacer */}
+      <h2 className="text-lg font-medium text-ink">¿Qué necesitas hacer hoy?</h2>
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        {[
+          { href: '/patient/appointments', title: 'Solicitar hora', desc: 'Agenda una cita de atención médica' },
+          { href: '/patient/symptoms', title: 'Registrar síntomas', desc: 'Reporta síntomas visuales o de urgencia' },
+          { href: '/patient/history', title: 'Historial médico', desc: 'Consulta tus atenciones previas' },
+        ].map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="group flex flex-col justify-between gap-4 rounded-2xl border border-line bg-surface p-5 transition duration-200 ease-out-quart hover:-translate-y-0.5 hover:border-brand/30"
+          >
+            <div>
+              <h3 className="font-medium text-ink group-hover:text-brand">{item.title}</h3>
+              <p className="mt-1 text-sm text-inkMuted">{item.desc}</p>
+            </div>
+            <span
+              aria-hidden="true"
+              className="text-inkMuted/50 transition duration-200 ease-out-quart group-hover:translate-x-0.5 group-hover:text-brand"
+            >
+              →
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Resumen de actividad, secundario */}
+      <h2 className="mt-10 text-lg font-medium text-ink">Tu actividad</h2>
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
         <StatCard label="Citas solicitadas" value={appointments} />
         <StatCard label="Reportes de síntomas" value={symptomReports} />
         <StatCard label="Consultas completadas" value={consultations} />
-      </div>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
-        <a href="/patient/appointments" className="rounded-lg border border-blue-200 bg-blue-50 p-5 dark:border-blue-800 dark:bg-blue-900/20">
-          <h3 className="font-semibold text-blue-800 dark:text-blue-300">Solicitar hora</h3>
-          <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">Agenda una cita de atención médica</p>
-        </a>
-        <a href="/patient/symptoms" className="rounded-lg border border-orange-200 bg-orange-50 p-5 dark:border-orange-800 dark:bg-orange-900/20">
-          <h3 className="font-semibold text-orange-800 dark:text-orange-300">Registrar síntomas</h3>
-          <p className="mt-1 text-sm text-orange-600 dark:text-orange-400">Reporta síntomas visuales o de urgencia</p>
-        </a>
-        <a href="/patient/history" className="rounded-lg border border-green-200 bg-green-50 p-5 dark:border-green-800 dark:bg-green-900/20">
-          <h3 className="font-semibold text-green-800 dark:text-green-300">Historial médico</h3>
-          <p className="mt-1 text-sm text-green-600 dark:text-green-400">Consulta tus atenciones previas</p>
-        </a>
       </div>
     </PlatformShell>
   );
