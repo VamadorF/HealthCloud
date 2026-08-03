@@ -49,15 +49,7 @@ Las rutas `/demo/*` son interfaces estáticas con datos realistas. Las rutas `/a
 
 ---
 
-## Desplegar el mock en Vercel
 
-El mock está listo para Vercel **sin configurar Supabase ni base de datos**.
-
-### Pasos
-
-1. Conecta el repositorio en [vercel.com](https://vercel.com) → **Add New Project**
-2. Vercel detecta Next.js automáticamente (no necesitas variables de entorno)
-3. Haz deploy
 
 ### URLs que funcionan sin configuración
 
