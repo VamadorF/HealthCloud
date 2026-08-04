@@ -9,41 +9,56 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: '#f5f6f3',
-        ink: '#173f3b',
-        inkBody: '#22312e',
-        inkMuted: '#5c736b',
+        // Mundo "señalética clínica": muro claro con matiz verde, superficies
+        // blancas y campos hundidos (reciben contenido, no lo emiten).
+        canvas: '#f4f6f5',
+        surface: '#ffffff',
+        sunken: '#edf1ef',
+        ink: '#14231e',
+        inkBody: '#24332d',
+        inkMuted: '#5d6f67',
         brand: {
-          DEFAULT: '#154d45',
-          dark: '#103f39',
-          mid: '#277166',
-          light: '#edf4ef',
-          soft: '#d8e9df',
+          DEFAULT: '#0f5747',
+          dark: '#0b4437',
+          mid: '#1f7460',
+          light: '#eaf2ee',
+          soft: '#d3e6db',
         },
         accent: {
           DEFAULT: '#9d3030',
           dark: '#822626',
           soft: '#fdf0f0',
         },
-        surface: '#ffffff',
-        line: '#d7e1db',
-        lineStrong: '#cbd4ce',
-        // Acentos por rol, separados en tono para distinguirse entre sí y del
-        // rojo de acción destructiva.
+        // Semánticos de estado: verde quirófano y ámbar de espera.
+        ok: {
+          DEFAULT: '#176151',
+          soft: '#e8f3ec',
+        },
+        warn: {
+          DEFAULT: '#8a5e16',
+          soft: '#fdf5e3',
+        },
+        // Bordes en rgba: se funden con el fondo y marcan el límite sin
+        // pedir atención (alto contraste los refuerza desde globals.css).
+        line: 'rgba(20, 35, 30, 0.10)',
+        lineStrong: 'rgba(20, 35, 30, 0.18)',
+        // Líneas de guía por rol, como las franjas de color pintadas en los
+        // pasillos de un hospital: saturadas, distinguibles entre sí y del
+        // rojo destructivo.
         role: {
-          admin: '#5b4b8a',
-          org: '#2a6f97',
-          spec: '#1b7a5a',
-          patient: '#8f4a68',
+          admin: '#5d47a6',
+          org: '#1f6f9e',
+          spec: '#177a58',
+          patient: '#a34d72',
         },
       },
       fontFamily: {
         sans: ['var(--font-atkinson)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-atkinson)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-archivo)', 'var(--font-atkinson)', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        card: '0 1px 2px rgba(23,63,59,0.03)',
-        lift: '0 18px 50px rgba(24,61,53,0.2)',
+        card: '0 1px 2px rgba(20, 35, 30, 0.04)',
+        lift: '0 0 0 1px rgba(20, 35, 30, 0.05), 0 18px 50px rgba(20, 35, 30, 0.18)',
       },
       // Curva de easing del prototipo: se usa en hovers, lifts y transiciones.
       transitionTimingFunction: {

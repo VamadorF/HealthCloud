@@ -120,7 +120,7 @@ export function ProfileForm({ userId, email, fullName, avatarUrl }: ProfileFormP
             accept="image/jpeg,image/png,image/webp"
             onChange={handleAvatarChange}
             disabled={isUploading}
-            className="text-sm text-inkMuted file:mr-4 file:rounded-xl file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-bold file:text-white file:transition file:duration-200 hover:file:bg-brand-dark disabled:opacity-60"
+            className="text-sm text-inkMuted file:mr-4 file:rounded-lg file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-bold file:text-white file:transition file:duration-200 hover:file:bg-brand-dark disabled:opacity-60"
           />
           {isUploading && (
             <p className="text-sm text-inkMuted" role="status">Subiendo avatar…</p>

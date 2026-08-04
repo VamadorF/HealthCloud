@@ -24,13 +24,13 @@ export default function DemoPatientSymptomsPage() {
         <div className="mt-6">
           <p className="text-sm font-medium text-ink">Nuevo reporte</p>
           <textarea
-            className="mt-2 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm"
+            className="mt-2 w-full rounded-lg border border-line bg-sunken px-4 py-3 text-sm"
             rows={3}
             placeholder="Describe lo que estás sintiendo..."
             readOnly
             defaultValue="Dolor de cabeza leve desde ayer en la tarde, sin fiebre ni náuseas."
           />
-          <button className="mt-3 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white">
+          <button className="mt-3 rounded-lg bg-brand px-4 py-2 text-sm font-display text-white transition-colors duration-200 ease-out-soft hover:bg-brand-dark">
             Enviar reporte
           </button>
         </div>

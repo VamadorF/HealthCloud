@@ -20,7 +20,7 @@ export default async function OrganizationProfilePage() {
     >
       <form
         action={updateOrganizationProfile}
-        className="max-w-2xl space-y-4 rounded-2xl border border-line bg-surface p-6"
+        className="max-w-2xl space-y-4 rounded-xl border border-line bg-surface p-6 shadow-card"
       >
         <Input name="name" label="Nombre" required defaultValue={organization?.name ?? ''} />
         <Input name="description" label="Descripción" defaultValue={organization?.description ?? ''} />

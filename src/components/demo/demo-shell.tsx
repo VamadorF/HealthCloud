@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { DemoRole, DEMO_NAV, DEMO_USERS } from '@/lib/mock/demo-data';
-import { PillNav, LocationCrumb } from '@/components/platform/sidebar-nav';
+import { SidebarNav, LocationCrumb } from '@/components/platform/sidebar-nav';
+import { ROLE_THEMES } from '@/components/platform/role-theme';
 import { AccessibilityControls } from '@/components/platform/accessibility';
 import { GuidedTour } from '@/components/platform/guided-tour';
 
@@ -12,80 +13,101 @@ interface DemoShellProps {
 }
 
 const ROLE_CONTEXT: Record<DemoRole, string> = {
-  admin: 'Panel maestro de administración',
+  admin: 'Administración general',
   organization: 'Cuenta institucional',
   specialist: 'Cuenta profesional',
   patient: 'Cuenta personal',
 };
 
+/**
+ * Versión de demostración del shell de "señalética clínica": misma franja de
+ * guía por rol y barra lateral que el PlatformShell, con un selector para
+ * cambiar de línea (de rol) sin salir de la demo.
+ */
 export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
   const user = DEMO_USERS[role];
   const nav = DEMO_NAV[role];
+  const theme = ROLE_THEMES[role];
 
   return (
-    <div className="min-h-screen bg-canvas">
-      {/* Cabecera */}
-      <header data-tour="header" className="border-b border-lineStrong">
-        <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <div>
-            <Link href="/" className="font-display text-lg text-ink">
-              HealthCloud
-            </Link>
-            <p className="mt-1 text-sm text-inkMuted">
-              {ROLE_CONTEXT[role]} · Vista de demostración
+    <div className="relative min-h-screen bg-canvas lg:flex">
+      {/* Línea de guía del rol */}
+      <span aria-hidden="true" className={`absolute inset-y-0 left-0 z-20 w-1 ${theme.line}`} />
+
+      <aside
+        data-tour="nav"
+        className="flex flex-col gap-5 border-b border-line px-5 pb-4 pt-5 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:overflow-x-hidden lg:border-b-0 lg:border-r lg:px-6 lg:pb-6 lg:pt-7"
+      >
+        <div>
+          <Link href="/" className="font-display text-lg text-ink">
+            HealthCloud
+          </Link>
+          <p className={`signage-label mt-1.5 ${theme.text}`}>{ROLE_CONTEXT[role]}</p>
+        </div>
+
+        <SidebarNav items={nav} tone={role} />
+
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4 lg:mt-auto lg:flex-col lg:items-stretch lg:gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-ink">{user.name}</p>
+            <p className="truncate text-xs text-inkMuted">
+              {user.context} · Vista de demostración
             </p>
           </div>
-          <div className="flex flex-col gap-2 sm:items-end">
-            <div className="flex flex-wrap items-center gap-3 sm:justify-end">
-              <p className="text-sm text-inkMuted">
-                {user.name} · {user.context}
-              </p>
-              <GuidedTour role={role} roleLabel={user.roleLabel} />
-              <AccessibilityControls />
-            </div>
-            <RoleSwitcher current={role} />
+          <RoleSwitcher current={role} />
+        </div>
+      </aside>
+
+      <div className="min-w-0 flex-1">
+        <header
+          data-tour="header"
+          className="flex items-center justify-between gap-4 border-b border-line px-5 py-3.5 sm:px-8"
+        >
+          <LocationCrumb roleLabel={user.roleLabel} items={nav} tone={role} />
+          <div className="flex shrink-0 items-center gap-2">
+            <GuidedTour role={role} roleLabel={user.roleLabel} />
+            <AccessibilityControls />
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="mx-auto max-w-[1600px] px-5 py-9 sm:px-8">
-        {/* Tarjeta hero: ubicación, título y navegación por secciones */}
-        <div data-tour="nav" className="rounded-2xl border border-line bg-surface px-6 py-6 sm:px-8">
-          <LocationCrumb roleLabel={user.roleLabel} items={nav} />
-          <h1 className="mt-2 font-display text-3xl text-ink sm:text-[34px]">{title}</h1>
-          {subtitle && (
-            <p className="mt-3 max-w-3xl text-base leading-6 text-inkMuted">{subtitle}</p>
-          )}
-          <PillNav items={nav} />
-        </div>
-
-        <div data-tour="content" className="mt-6">
-          {children}
-        </div>
-      </main>
+        <main className="mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 lg:py-10">
+          <div className="max-w-3xl">
+            <h1 className="font-display text-[1.75rem] leading-tight text-ink sm:text-[2rem]">
+              {title}
+            </h1>
+            {subtitle && <p className="mt-2 text-base leading-6 text-inkMuted">{subtitle}</p>}
+          </div>
+          <div data-tour="content" className="mt-8">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
 
+// Cambiar de rol es cambiar de línea: cada opción lleva su color de guía.
 function RoleSwitcher({ current }: { current: DemoRole }) {
-  const roles: { key: DemoRole; label: string }[] = [
-    { key: 'admin', label: 'Admin' },
-    { key: 'organization', label: 'Org' },
-    { key: 'specialist', label: 'Esp.' },
-    { key: 'patient', label: 'Pac.' },
+  const roles: { key: DemoRole; label: string; line: string }[] = [
+    { key: 'admin', label: 'Admin', line: 'bg-role-admin' },
+    { key: 'organization', label: 'Org', line: 'bg-role-org' },
+    { key: 'specialist', label: 'Esp.', line: 'bg-role-spec' },
+    { key: 'patient', label: 'Pac.', line: 'bg-role-patient' },
   ];
 
   return (
-    <div className="flex shrink-0 gap-1 rounded-2xl border border-line bg-surface p-1 text-xs">
+    <div className="flex shrink-0 gap-1 rounded-lg border border-line bg-sunken/60 p-1 text-xs">
       {roles.map((r) => (
         <Link
           key={r.key}
           href={`/demo/${r.key}`}
-          className={`rounded-lg px-3 py-1.5 font-bold transition-colors duration-200 ease-out-soft ${
-            current === r.key ? 'bg-brand text-white' : 'text-inkMuted hover:text-ink'
+          aria-current={current === r.key ? 'page' : undefined}
+          className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-md px-2 py-1.5 font-bold transition-colors duration-200 ease-out-soft ${
+            current === r.key ? 'bg-surface text-ink shadow-card' : 'text-inkMuted hover:text-ink'
           }`}
         >
           {r.label}
+          <span aria-hidden="true" className={`h-[3px] w-5 rounded-full ${r.line}`} />
         </Link>
       ))}
     </div>
@@ -96,10 +118,10 @@ export function MetricGrid({ items }: { items: { label: string; value: string; d
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => (
-        <div key={item.label} className="rounded-2xl border border-line bg-surface p-5">
-          <p className="text-sm font-bold text-inkMuted">{item.label}</p>
-          <div className="mt-5 flex items-end justify-between gap-3">
-            <p className="text-[32px] font-bold leading-none tracking-[-0.04em] text-ink">
+        <div key={item.label} className="rounded-xl border border-line bg-surface p-5 shadow-card">
+          <p className="signage-label text-inkMuted">{item.label}</p>
+          <div className="mt-4 flex items-end justify-between gap-3">
+            <p className="font-display text-[1.875rem] leading-none tracking-tight text-ink tabular-nums">
               {item.value}
             </p>
             {item.delta && (
@@ -125,9 +147,9 @@ export function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-line bg-surface">
-      <div className="flex min-h-[68px] items-center justify-between gap-4 border-b border-line px-6 py-3">
-        <h2 className="text-lg font-bold text-ink">{title}</h2>
+    <section className="overflow-hidden rounded-xl border border-line bg-surface shadow-card">
+      <div className="flex min-h-[56px] items-center justify-between gap-4 border-b border-line px-5 py-3">
+        <h2 className="signage-label text-inkMuted">{title}</h2>
         {action}
       </div>
       {flush ? children : <div className="p-6">{children}</div>}
@@ -137,26 +159,26 @@ export function Panel({
 
 export function StatusPill({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    Activa: 'bg-emerald-50 text-[#176151]',
-    Activo: 'bg-emerald-50 text-[#176151]',
-    Confirmada: 'bg-emerald-50 text-[#176151]',
-    Pendiente: 'bg-amber-50 text-[#8a5e16]',
-    Solicitada: 'bg-amber-50 text-[#8a5e16]',
-    Revisión: 'bg-amber-50 text-[#8a5e16]',
-    Invitada: 'bg-amber-50 text-[#8a5e16]',
-    Invitado: 'bg-amber-50 text-[#8a5e16]',
+    Activa: 'bg-ok-soft text-ok',
+    Activo: 'bg-ok-soft text-ok',
+    Confirmada: 'bg-ok-soft text-ok',
+    Pendiente: 'bg-warn-soft text-warn',
+    Solicitada: 'bg-warn-soft text-warn',
+    Revisión: 'bg-warn-soft text-warn',
+    Invitada: 'bg-warn-soft text-warn',
+    Invitado: 'bg-warn-soft text-warn',
     'En sala': 'bg-brand-light text-brand-mid',
-    Media: 'bg-amber-50 text-[#8a5e16]',
-    Baja: 'bg-emerald-50 text-[#176151]',
-    Seguimiento: 'bg-emerald-50 text-[#176151]',
-    Crónico: 'bg-amber-50 text-[#8a5e16]',
+    Media: 'bg-warn-soft text-warn',
+    Baja: 'bg-ok-soft text-ok',
+    Seguimiento: 'bg-ok-soft text-ok',
+    Crónico: 'bg-warn-soft text-warn',
     Nuevo: 'bg-brand-light text-brand-mid',
   };
 
   return (
     <span
-      className={`inline-flex h-fit shrink-0 self-start whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${
-        styles[status] ?? 'bg-canvas text-inkMuted'
+      className={`inline-flex h-fit shrink-0 self-start whitespace-nowrap rounded-md px-2 py-1 text-xs font-bold ${
+        styles[status] ?? 'bg-sunken text-inkMuted'
       }`}
     >
       {status}
@@ -179,7 +201,7 @@ export function BarChart({
     <div className="space-y-4">
       {data.map((row) => (
         <div key={String(row.week)}>
-          <div className="mb-2 flex justify-between text-xs text-inkMuted">
+          <div className="mb-2 flex justify-between text-xs text-inkMuted tabular-nums">
             <span>{row.week}</span>
           </div>
           <div className="flex h-8 gap-1">
@@ -189,7 +211,7 @@ export function BarChart({
               return (
                 <div
                   key={k.key}
-                  className={`${k.color} transition-all duration-300 ease-out-soft`}
+                  className={`${k.color} rounded-sm transition-all duration-300 ease-out-soft`}
                   style={{ width: `${width}%` }}
                   title={`${k.label}: ${val}`}
                 />
@@ -201,7 +223,7 @@ export function BarChart({
       <div className="flex gap-4 text-xs text-inkMuted">
         {keys.map((k) => (
           <span key={k.key} className="flex items-center gap-1.5">
-            <span className={`inline-block h-2 w-2 rounded-full ${k.color}`} />
+            <span className={`inline-block h-[3px] w-4 rounded-full ${k.color}`} />
             {k.label}
           </span>
         ))}
@@ -224,7 +246,7 @@ export function TimelineItem({
   return (
     <div className="flex gap-4 border-l-2 border-brand-soft pl-5 pb-6 last:pb-0">
       <div className="flex-1">
-        <p className="text-xs font-bold text-brand-mid">{time}</p>
+        <p className="font-display text-xs font-semibold text-brand-mid tabular-nums">{time}</p>
         <p className="mt-1 font-bold text-ink">{title}</p>
         <p className="mt-0.5 text-sm text-inkMuted">{meta}</p>
       </div>

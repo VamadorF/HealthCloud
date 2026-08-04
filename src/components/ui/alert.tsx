@@ -12,7 +12,7 @@ export function Alert({
   children: React.ReactNode;
 }) {
   return (
-    <div role={tone === 'error' ? 'alert' : 'status'} className={`border px-4 py-3 text-sm ${tones[tone]}`}>
+    <div role={tone === 'error' ? 'alert' : 'status'} className={`rounded-lg border px-4 py-3 text-sm ${tones[tone]}`}>
       {children}
     </div>
   );
