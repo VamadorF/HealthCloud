@@ -3,8 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --background: #f5f6f3;
-  --foreground: #22312e;
+  --background: #f4f6f5;
+  --foreground: #24332d;
+  /* Base clínica: 18px. Toda la interfaz está expresada en rem, así que la
+     escala completa (tipografía y espaciado) parte más grande y legible. */
+  font-size: 112.5%;
 }
 
 body {
@@ -14,12 +17,32 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* La dirección de arte usa una sola familia (Atkinson Hyperlegible);
-   los títulos se distinguen por peso y tracking apretado. */
+/* Dirección "señalética clínica": Archivo (ADN de rotulación) lleva títulos,
+   navegación y cifras; Atkinson Hyperlegible se mantiene en el cuerpo por
+   legibilidad. Los títulos se distinguen por familia, peso y tracking. */
 @layer base {
   .font-display {
-    font-weight: 700;
-    letter-spacing: -0.04em;
+    font-family: var(--font-archivo), var(--font-atkinson), system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  /* Rótulo de señalética: etiqueta corta en mayúsculas con tracking abierto.
+     Se usa para cabeceras de sección, etiquetas de métricas y migas. */
+  .signage-label {
+    font-family: var(--font-archivo), var(--font-atkinson), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 }
 
@@ -34,32 +57,66 @@ body {
 .tour-highlight {
   position: relative;
   z-index: 30;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   box-shadow:
-    0 0 0 2px #f5f6f3,
-    0 0 0 6px rgba(140, 195, 170, 0.7);
+    0 0 0 2px #f4f6f5,
+    0 0 0 6px rgba(31, 116, 96, 0.55);
   transition: box-shadow 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* Preferencias de accesibilidad: la escala en :root reajusta todo lo que
    está expresado en rem (tipografía y espaciado). */
 :root[data-text-size='large'] {
-  font-size: 112.5%;
-}
-
-:root[data-text-size='xlarge'] {
   font-size: 125%;
 }
 
+:root[data-text-size='xlarge'] {
+  font-size: 140%;
+}
+
 :root[data-contrast='on'] {
-  --foreground: #10201d;
+  --foreground: #0e1c17;
 }
 
 :root[data-contrast='on'] .text-inkMuted {
-  color: #33453f;
+  color: #3c4f48;
 }
 
 :root[data-contrast='on'] .border-line,
+:root[data-contrast='on'] .border-lineStrong,
 :root[data-contrast='on'] .divide-line > * + * {
-  border-color: #8fa39a;
+  border-color: #7d9188;
+}
+
+/* Espaciado de lectura: más aire entre líneas, letras y palabras. */
+:root[data-spacing='on'] body {
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  word-spacing: 0.06em;
+}
+
+/* Subrayar enlaces: los hace identificables sin depender del color. */
+:root[data-links='underline'] a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Reducir animaciones: por preferencia del sistema o por ajuste manual. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:root[data-motion='reduced'] *,
+:root[data-motion='reduced'] *::before,
+:root[data-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

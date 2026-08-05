@@ -5,15 +5,16 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-// Campos rectos, sin radio: parte de la dirección de arte del prototipo.
+// Campos hundidos: el relleno ligeramente más oscuro que la superficie
+// señala "escribe aquí" sin necesidad de bordes pesados.
 export const fieldStyles =
-  'w-full border border-lineStrong bg-surface px-3 py-2.5 text-sm text-inkBody placeholder:text-inkMuted/60 outline-none transition-colors duration-200 ease-out-soft focus:border-brand-mid focus:ring-2 focus:ring-brand-soft disabled:cursor-not-allowed disabled:bg-canvas disabled:opacity-70';
+  'w-full rounded-lg border border-line bg-sunken px-3 py-2.5 text-sm text-inkBody placeholder:text-inkMuted/60 outline-none transition-colors duration-200 ease-out-soft focus:border-brand-mid focus:bg-surface focus:ring-2 focus:ring-brand-soft disabled:cursor-not-allowed disabled:bg-canvas disabled:opacity-70';
 
 export const fieldErrorStyles = 'border-accent focus:border-accent focus:ring-accent-soft';
 
 export function FieldLabel({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
   return (
-    <label className="mb-2 block text-xs font-bold text-inkMuted" htmlFor={htmlFor}>
+    <label className="signage-label mb-2 block text-inkMuted" htmlFor={htmlFor}>
       {children}
     </label>
   );

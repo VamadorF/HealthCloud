@@ -13,12 +13,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center rounded-xl border font-bold transition-all duration-200 ease-out-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-soft disabled:cursor-wait disabled:opacity-60 disabled:pointer-events-none';
+      'inline-flex items-center justify-center rounded-lg border font-display transition-all duration-150 ease-out-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-soft focus-visible:ring-offset-1 active:scale-[0.98] disabled:cursor-wait disabled:opacity-60 disabled:pointer-events-none';
 
     const variants = {
-      primary: 'border-brand bg-brand text-white hover:-translate-y-px hover:bg-brand-dark',
+      primary: 'border-brand bg-brand text-white hover:bg-brand-dark',
       secondary: 'border-lineStrong bg-surface text-brand-mid hover:bg-brand-light',
-      danger: 'border-accent bg-accent text-white hover:-translate-y-px hover:bg-accent-dark focus-visible:ring-accent-soft',
+      danger: 'border-accent bg-accent text-white hover:bg-accent-dark focus-visible:ring-accent-soft',
       ghost: 'border-transparent text-brand-mid hover:border-brand-soft hover:bg-brand-light',
     };
 

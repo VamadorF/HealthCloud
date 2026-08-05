@@ -21,7 +21,7 @@ export default async function PatientDashboardPage() {
       description="Solicita atención, registra síntomas y consulta tu historial médico"
     >
       {/* Acciones primero: es lo que el paciente viene a hacer */}
-      <h2 className="text-lg font-medium text-ink">¿Qué necesitas hacer hoy?</h2>
+      <h2 className="font-display text-lg text-ink">¿Qué necesitas hacer hoy?</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         {[
           { href: '/patient/appointments', title: 'Solicitar hora', desc: 'Agenda una cita de atención médica' },
@@ -31,7 +31,7 @@ export default async function PatientDashboardPage() {
           <Link
             key={item.href}
             href={item.href}
-            className="group flex flex-col justify-between gap-4 rounded-2xl border border-line bg-surface p-5 transition duration-200 ease-out-quart hover:-translate-y-0.5 hover:border-brand/30"
+            className="group flex flex-col justify-between gap-4 rounded-xl border border-line bg-surface p-5 shadow-card transition duration-200 ease-out-quart hover:-translate-y-0.5 hover:border-brand/30"
           >
             <div>
               <h3 className="font-medium text-ink group-hover:text-brand">{item.title}</h3>
@@ -48,7 +48,7 @@ export default async function PatientDashboardPage() {
       </div>
 
       {/* Resumen de actividad, secundario */}
-      <h2 className="mt-10 text-lg font-medium text-ink">Tu actividad</h2>
+      <h2 className="mt-10 font-display text-lg text-ink">Tu actividad</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         <StatCard label="Citas solicitadas" value={appointments} />
         <StatCard label="Reportes de síntomas" value={symptomReports} />

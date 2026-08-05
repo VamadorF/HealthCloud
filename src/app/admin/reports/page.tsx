@@ -33,21 +33,21 @@ export default async function AdminReportsPage() {
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
+      <div className="overflow-x-auto rounded-xl border border-line bg-surface shadow-card">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-line bg-[#f7f9f7]">
-            <tr className="text-sm font-bold text-inkMuted">
-              <th className="px-4 py-3">Fecha</th>
-              <th className="px-4 py-3">Usuarios</th>
-              <th className="px-4 py-3">Activos</th>
-              <th className="px-4 py-3">Citas</th>
-              <th className="px-4 py-3">Consultas</th>
-              <th className="px-4 py-3">Organizaciones</th>
+          <thead className="border-b border-line bg-sunken/60">
+            <tr>
+              <th className="signage-label px-4 py-3 text-inkMuted">Fecha</th>
+              <th className="signage-label px-4 py-3 text-inkMuted">Usuarios</th>
+              <th className="signage-label px-4 py-3 text-inkMuted">Activos</th>
+              <th className="signage-label px-4 py-3 text-inkMuted">Citas</th>
+              <th className="signage-label px-4 py-3 text-inkMuted">Consultas</th>
+              <th className="signage-label px-4 py-3 text-inkMuted">Organizaciones</th>
             </tr>
           </thead>
-          <tbody className="text-inkBody">
+          <tbody className="text-inkBody tabular-nums">
             {metrics.map((m) => (
-              <tr key={m.id} className="border-b border-line/60 last:border-b-0 hover:bg-[#fafbfa]">
+              <tr key={m.id} className="border-b border-line/60 last:border-b-0 hover:bg-canvas/60">
                 <td className="px-4 py-3">{formatDate(m.date)}</td>
                 <td className="px-4 py-3">{m.totalUsers}</td>
                 <td className="px-4 py-3">{m.activeUsers}</td>

@@ -16,7 +16,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           className={`${fieldStyles} ${error ? fieldErrorStyles : ''} ${className}`}
           {...props}
         />
-        {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-1.5 text-sm text-accent">{error}</p>}
       </div>
     );
   }
