@@ -1,6 +1,9 @@
 /**
  * Programación clínica de encuestas (PSS-14, PSQI, PCS).
- * Cadencia por defecto: cada 2 meses, salvo activación forzada del especialista.
+ *
+ * Por defecto están DESACTIVADAS. El especialista decide cuáles activar
+ * y cuándo. Cadencia de seguimiento: cada 2 meses tras una respuesta,
+ * salvo que el especialista vuelva a abrir la ventana.
  */
 
 export type SurveyInstrumentId = 'PSS-14' | 'PSQI' | 'PCS';
@@ -34,30 +37,43 @@ export const SURVEY_INSTRUMENTS: Record<
   },
 };
 
+export const SURVEY_INSTRUMENT_IDS = Object.keys(SURVEY_INSTRUMENTS) as SurveyInstrumentId[];
+
+export interface SurveyRecord {
+  completedAt: string;
+  score: Record<string, unknown>;
+  summary?: string;
+}
+
 export interface InstrumentAssignment {
+  /** El especialista ha asignado esta encuesta al paciente. */
   enabled: boolean;
-  /** Si true, la encuesta queda disponible aunque no hayan pasado 2 meses. */
+  /** Abre la ventana ahora, aunque no hayan pasado 2 meses. */
   forceActive: boolean;
   forceActivatedAt?: string | null;
   lastCompletedAt?: string | null;
   lastScore?: Record<string, unknown> | null;
+  /** Historial de respuestas del paciente (más reciente primero). */
+  history?: SurveyRecord[];
 }
 
 export type SurveyConfig = Partial<Record<SurveyInstrumentId, InstrumentAssignment>>;
 
+/** Por defecto: ninguna encuesta activa hasta que el especialista la asigne. */
 export const DEFAULT_ASSIGNMENT: InstrumentAssignment = {
-  enabled: true,
+  enabled: false,
   forceActive: false,
   forceActivatedAt: null,
   lastCompletedAt: null,
   lastScore: null,
+  history: [],
 };
 
 export function defaultSurveyConfig(): SurveyConfig {
   return {
-    'PSS-14': { ...DEFAULT_ASSIGNMENT },
-    PSQI: { ...DEFAULT_ASSIGNMENT },
-    PCS: { ...DEFAULT_ASSIGNMENT },
+    'PSS-14': { ...DEFAULT_ASSIGNMENT, history: [] },
+    PSQI: { ...DEFAULT_ASSIGNMENT, history: [] },
+    PCS: { ...DEFAULT_ASSIGNMENT, history: [] },
   };
 }
 
@@ -65,9 +81,21 @@ export function mergeSurveyConfig(stored?: SurveyConfig | null): SurveyConfig {
   const defaults = defaultSurveyConfig();
   if (!stored) return defaults;
   return {
-    'PSS-14': { ...DEFAULT_ASSIGNMENT, ...stored['PSS-14'] },
-    PSQI: { ...DEFAULT_ASSIGNMENT, ...stored.PSQI },
-    PCS: { ...DEFAULT_ASSIGNMENT, ...stored.PCS },
+    'PSS-14': {
+      ...DEFAULT_ASSIGNMENT,
+      ...stored['PSS-14'],
+      history: stored['PSS-14']?.history ?? [],
+    },
+    PSQI: {
+      ...DEFAULT_ASSIGNMENT,
+      ...stored.PSQI,
+      history: stored.PSQI?.history ?? [],
+    },
+    PCS: {
+      ...DEFAULT_ASSIGNMENT,
+      ...stored.PCS,
+      history: stored.PCS?.history ?? [],
+    },
   };
 }
 
@@ -91,14 +119,14 @@ export function getSurveyAvailability(
   if (!state.enabled) {
     return {
       status: 'disabled',
-      reason: 'Desactivada por el especialista.',
+      reason: 'No asignada por el especialista.',
     };
   }
 
   if (state.forceActive) {
     return {
       status: 'available',
-      reason: 'Activada por el especialista fuera de cadencia.',
+      reason: 'Abierta por el especialista.',
       dueToForce: true,
     };
   }
@@ -106,7 +134,7 @@ export function getSurveyAvailability(
   if (!state.lastCompletedAt) {
     return {
       status: 'available',
-      reason: 'Pendiente de primera respuesta.',
+      reason: 'Asignada · pendiente de primera respuesta.',
       dueToForce: false,
     };
   }
@@ -125,7 +153,7 @@ export function getSurveyAvailability(
   const daysRemaining = Math.max(1, Math.ceil(ms / (1000 * 60 * 60 * 24)));
   return {
     status: 'waiting',
-    reason: `Próxima ventana en ${daysRemaining} día${daysRemaining === 1 ? '' : 's'}.`,
+    reason: `Respondida · próxima ventana en ${daysRemaining} día${daysRemaining === 1 ? '' : 's'}.`,
     nextDueAt: nextDue,
     daysRemaining,
   };
@@ -136,6 +164,41 @@ export function isSurveyAvailableForPatient(
   now = new Date()
 ): boolean {
   return getSurveyAvailability(assignment, now).status === 'available';
+}
+
+/** Añade un registro y cierra la ventana forzada. */
+export function appendSurveyRecord(
+  assignment: InstrumentAssignment,
+  score: Record<string, unknown>,
+  summary?: string
+): InstrumentAssignment {
+  const completedAt = new Date().toISOString();
+  const record: SurveyRecord = { completedAt, score, summary };
+  const history = [record, ...(assignment.history ?? [])].slice(0, 20);
+  return {
+    ...assignment,
+    lastCompletedAt: completedAt,
+    lastScore: score,
+    forceActive: false,
+    forceActivatedAt: null,
+    history,
+  };
+}
+
+export function formatScoreSummary(
+  instrument: SurveyInstrumentId,
+  score: Record<string, unknown>
+): string {
+  if (instrument === 'PSS-14' && typeof score.total === 'number') {
+    return `PSS ${score.total}/56${score.bandLabel ? ` · ${score.bandLabel}` : ''}`;
+  }
+  if (instrument === 'PSQI' && typeof score.global === 'number') {
+    return `PSQI ${score.global}/21${score.bandLabel ? ` · ${score.bandLabel}` : ''}`;
+  }
+  if (instrument === 'PCS' && typeof score.total === 'number') {
+    return `PCS ${score.total}/52${score.bandLabel ? ` · ${score.bandLabel}` : ''}`;
+  }
+  return SURVEY_INSTRUMENTS[instrument].shortLabel;
 }
 
 export const SURVEY_STORAGE_KEY = 'healthcloud:survey-assignments';

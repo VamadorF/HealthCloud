@@ -28,11 +28,20 @@ export async function updatePatientSurveyInstrument(formData: FormData) {
   const current = mergeSurveyConfig(
     (profile?.surveyConfig as SurveyConfig | null | undefined) ?? null
   );
-  const item = { ...current[instrument]! };
+  const item = { ...current[instrument]!, history: current[instrument]?.history ?? [] };
 
-  if (action === 'toggle') {
-    item.enabled = !item.enabled;
-    if (!item.enabled) {
+  if (action === 'assign-open') {
+    item.enabled = true;
+    item.forceActive = true;
+    item.forceActivatedAt = new Date().toISOString();
+  } else if (action === 'unassign' || action === 'toggle') {
+    // toggle legacy: if enabled, unassign; else assign-open
+    if (action === 'toggle' && !item.enabled) {
+      item.enabled = true;
+      item.forceActive = true;
+      item.forceActivatedAt = new Date().toISOString();
+    } else {
+      item.enabled = false;
       item.forceActive = false;
       item.forceActivatedAt = null;
     }

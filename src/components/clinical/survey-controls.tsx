@@ -2,17 +2,20 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import {
+  SURVEY_INSTRUMENT_IDS,
   SURVEY_INSTRUMENTS,
   SURVEY_STORAGE_KEY,
   SurveyConfig,
   SurveyInstrumentId,
+  appendSurveyRecord,
+  formatScoreSummary,
   getSurveyAvailability,
   mergeSurveyConfig,
   type InstrumentAssignment,
 } from '@/lib/clinical/survey-schedule';
+import { InstrumentRecords } from '@/components/clinical/survey-records';
 
 type PatientKey = string;
-
 type Store = Record<PatientKey, SurveyConfig>;
 
 function readStore(): Store {
@@ -56,11 +59,24 @@ function usePatientSurveyConfig(patientKey: string) {
     });
   };
 
-  return { config, update, ready };
+  const replaceInstrument = (instrument: SurveyInstrumentId, nextAssignment: InstrumentAssignment) => {
+    setConfig((current) => {
+      const next = mergeSurveyConfig({
+        ...current,
+        [instrument]: nextAssignment,
+      });
+      const store = readStore();
+      store[patientKey] = next;
+      writeStore(store);
+      return next;
+    });
+  };
+
+  return { config, update, replaceInstrument, ready };
 }
 
 /**
- * Controles del especialista: activar / desactivar / forzar fuera de cadencia.
+ * Vista del especialista: cada encuesta separada, con activación propia y registros.
  */
 export function SpecialistSurveyControls({
   patientKey,
@@ -70,83 +86,114 @@ export function SpecialistSurveyControls({
   patientName: string;
 }) {
   const { config, update, ready } = usePatientSurveyConfig(patientKey);
-  const instruments = Object.keys(SURVEY_INSTRUMENTS) as SurveyInstrumentId[];
 
   if (!ready) {
-    return (
-      <p className="text-sm text-inkMuted">Cargando programación de encuestas…</p>
-    );
+    return <p className="text-sm text-inkMuted">Cargando encuestas…</p>;
   }
 
   return (
     <div className="space-y-4">
       <div>
-        <p className="signage-label text-inkMuted">Encuestas clínicas</p>
+        <p className="signage-label text-inkMuted">Encuestas del paciente</p>
         <p className="mt-1 text-sm text-inkMuted">
-          {patientName} · Cadencia por defecto cada 2 meses. Puedes desactivarlas o
-          activarlas ahora fuera de ventana.
+          {patientName} · Tú eliges qué escalas asignar y cuándo abrirlas. Tras cada
+          respuesta, la siguiente ventana es a los 2 meses.
         </p>
       </div>
 
-      <ul className="divide-y divide-line rounded-xl border border-line bg-surface">
-        {instruments.map((id) => {
+      <div className="grid gap-4">
+        {SURVEY_INSTRUMENT_IDS.map((id) => {
           const meta = SURVEY_INSTRUMENTS[id];
           const assignment = config[id]!;
           const availability = getSurveyAvailability(assignment);
 
           return (
-            <li key={id} className="px-4 py-4 sm:px-5">
+            <section
+              key={id}
+              className="rounded-xl border border-line bg-surface p-4 shadow-card sm:p-5"
+            >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="font-bold text-ink">{meta.shortLabel}</p>
-                  <p className="mt-0.5 text-sm text-inkMuted">{meta.description}</p>
+                  <div className="flex items-center gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="h-[3px] w-5 rounded-full bg-role-spec"
+                    />
+                    <p className="font-display text-base text-ink">{meta.shortLabel}</p>
+                  </div>
+                  <p className="mt-1 text-sm text-inkMuted">{meta.label}</p>
+                  <p className="mt-0.5 text-xs text-inkMuted">{meta.description}</p>
                   <p className="mt-2 text-xs text-inkMuted">{availability.reason}</p>
                 </div>
                 <AvailabilityPill availability={availability} enabled={assignment.enabled} />
               </div>
 
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() =>
-                    update(id, {
-                      enabled: !assignment.enabled,
-                      forceActive: assignment.enabled ? false : assignment.forceActive,
-                    })
-                  }
-                  className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm font-bold text-ink transition-colors duration-150 ease-out-soft hover:bg-brand-light"
-                >
-                  {assignment.enabled ? 'Desactivar' : 'Activar encuesta'}
-                </button>
-                <button
-                  type="button"
-                  disabled={!assignment.enabled}
-                  onClick={() =>
-                    update(id, {
-                      forceActive: true,
-                      forceActivatedAt: new Date().toISOString(),
-                    })
-                  }
-                  className="rounded-lg bg-brand px-3 py-2 text-sm font-display text-white transition-colors duration-150 ease-out-soft hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  Activar ahora
-                </button>
-                {assignment.forceActive && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {!assignment.enabled ? (
                   <button
                     type="button"
                     onClick={() =>
-                      update(id, { forceActive: false, forceActivatedAt: null })
+                      update(id, {
+                        enabled: true,
+                        forceActive: true,
+                        forceActivatedAt: new Date().toISOString(),
+                      })
                     }
-                    className="rounded-lg px-3 py-2 text-sm font-bold text-brand-mid hover:underline"
+                    className="rounded-lg bg-brand px-3 py-2 text-sm font-display text-white transition-colors duration-150 ease-out-soft hover:bg-brand-dark"
                   >
-                    Quitar activación forzada
+                    Asignar y abrir
                   </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        update(id, {
+                          enabled: false,
+                          forceActive: false,
+                          forceActivatedAt: null,
+                        })
+                      }
+                      className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm font-bold text-ink transition-colors duration-150 ease-out-soft hover:bg-brand-light"
+                    >
+                      Quitar asignación
+                    </button>
+                    {availability.status === 'waiting' && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          update(id, {
+                            forceActive: true,
+                            forceActivatedAt: new Date().toISOString(),
+                          })
+                        }
+                        className="rounded-lg bg-brand px-3 py-2 text-sm font-display text-white transition-colors duration-150 ease-out-soft hover:bg-brand-dark"
+                      >
+                        Reabrir ahora
+                      </button>
+                    )}
+                    {assignment.forceActive && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          update(id, { forceActive: false, forceActivatedAt: null })
+                        }
+                        className="rounded-lg px-3 py-2 text-sm font-bold text-brand-mid hover:underline"
+                      >
+                        Cerrar ventana
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
-            </li>
+
+              <div className="mt-4">
+                <InstrumentRecords instrument={id} assignment={assignment} />
+              </div>
+            </section>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
@@ -161,14 +208,14 @@ function AvailabilityPill({
   if (!enabled || availability.status === 'disabled') {
     return (
       <span className="rounded-md bg-sunken px-2 py-1 text-xs font-bold text-inkMuted">
-        Desactivada
+        No asignada
       </span>
     );
   }
   if (availability.status === 'available') {
     return (
       <span className="rounded-md bg-ok-soft px-2 py-1 text-xs font-bold text-ok">
-        {availability.dueToForce ? 'Forzada' : 'Disponible'}
+        {availability.dueToForce ? 'Abierta ahora' : 'Pendiente'}
       </span>
     );
   }
@@ -180,63 +227,85 @@ function AvailabilityPill({
 }
 
 /**
- * Lista de encuestas disponibles para el paciente (demo / localStorage).
+ * Inbox del paciente: solo las encuestas que el especialista ha abierto.
  */
 export function PatientSurveyInbox({ patientKey }: { patientKey: string }) {
-  const { config, update, ready } = usePatientSurveyConfig(patientKey);
-  const instruments = Object.keys(SURVEY_INSTRUMENTS) as SurveyInstrumentId[];
+  const { config, replaceInstrument, ready } = usePatientSurveyConfig(patientKey);
 
   const items = useMemo(() => {
-    return instruments.map((id) => ({
+    return SURVEY_INSTRUMENT_IDS.map((id) => ({
       id,
       meta: SURVEY_INSTRUMENTS[id],
       assignment: config[id]!,
       availability: getSurveyAvailability(config[id]),
     }));
-  }, [config, instruments]);
+  }, [config]);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent).detail as {
+        instrument: SurveyInstrumentId;
+        score: Record<string, unknown>;
+        patientKey?: string;
+      };
+      if (detail.patientKey && detail.patientKey !== patientKey) return;
+      // Recargar desde storage (markSurveyCompleted ya persistió el historial).
+      const store = readStore();
+      const fresh = mergeSurveyConfig(store[patientKey]);
+      replaceInstrument(detail.instrument, fresh[detail.instrument]!);
+    };
+    window.addEventListener('healthcloud:survey-complete', handler);
+    return () => window.removeEventListener('healthcloud:survey-complete', handler);
+  }, [patientKey, replaceInstrument]);
 
   if (!ready) return null;
 
   const available = items.filter((i) => i.availability.status === 'available');
-  const waiting = items.filter((i) => i.availability.status === 'waiting');
-  const disabled = items.filter((i) => i.availability.status === 'disabled');
+  const assignedWaiting = items.filter((i) => i.availability.status === 'waiting');
+  const notAssigned = items.filter((i) => i.availability.status === 'disabled');
 
   return (
-    <div className="space-y-6">
-      {available.length > 0 ? (
-        <section className="space-y-3">
-          <h2 className="signage-label text-inkMuted">Pendientes ahora</h2>
-          {available.map((item) => (
-            <a
-              key={item.id}
-              href={`/demo/patient/surveys/${item.meta.slug}`}
-              className="block rounded-xl border border-line bg-surface p-5 shadow-card transition duration-200 ease-out-soft hover:border-brand/30"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-display text-lg text-ink">{item.meta.label}</p>
-                  <p className="mt-1 text-sm text-inkMuted">{item.meta.description}</p>
-                  <p className="mt-2 text-xs text-brand-mid">{item.availability.reason}</p>
+    <div className="space-y-8">
+      <section className="space-y-3">
+        <h2 className="signage-label text-inkMuted">Para completar ahora</h2>
+        {available.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-lineStrong bg-surface/50 px-5 py-8 text-center text-sm text-inkMuted">
+            No tienes encuestas abiertas. Tu especialista decide cuáles asignarte y cuándo.
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {available.map((item) => (
+              <a
+                key={item.id}
+                href={`/demo/patient/surveys/${item.meta.slug}`}
+                className="block rounded-xl border border-line bg-surface p-5 shadow-card transition duration-200 ease-out-soft hover:border-brand/30"
+              >
+                <div className="flex items-start gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="mt-1 h-[3px] w-5 shrink-0 rounded-full bg-role-patient"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-display text-lg text-ink">{item.meta.shortLabel}</p>
+                    <p className="mt-0.5 text-sm font-medium text-ink">{item.meta.label}</p>
+                    <p className="mt-1 text-sm text-inkMuted">{item.meta.description}</p>
+                    <p className="mt-2 text-xs text-brand-mid">{item.availability.reason}</p>
+                  </div>
+                  <span aria-hidden="true" className="text-inkMuted">
+                    →
+                  </span>
                 </div>
-                <span aria-hidden="true" className="text-inkMuted">
-                  →
-                </span>
-              </div>
-            </a>
-          ))}
-        </section>
-      ) : (
-        <section className="rounded-xl border border-dashed border-lineStrong bg-surface/50 px-5 py-8 text-center text-sm text-inkMuted">
-          No tienes encuestas pendientes. La siguiente ventana es cada 2 meses, salvo que tu
-          especialista las active.
-        </section>
-      )}
+              </a>
+            ))}
+          </div>
+        )}
+      </section>
 
-      {(waiting.length > 0 || disabled.length > 0) && (
+      {assignedWaiting.length > 0 && (
         <section className="space-y-3">
-          <h2 className="signage-label text-inkMuted">Programación</h2>
+          <h2 className="signage-label text-inkMuted">Asignadas · en espera</h2>
           <ul className="divide-y divide-line rounded-xl border border-line bg-surface">
-            {[...waiting, ...disabled].map((item) => (
+            {assignedWaiting.map((item) => (
               <li key={item.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
                 <div>
                   <p className="text-sm font-bold text-ink">{item.meta.shortLabel}</p>
@@ -252,43 +321,26 @@ export function PatientSurveyInbox({ patientKey }: { patientKey: string }) {
         </section>
       )}
 
-      {/* Helper demo: marcar como completada tras enviar en páginas de encuesta */}
-      <span className="hidden" aria-hidden="true" data-survey-ready={ready ? '1' : '0'} />
-      {/* expose update for sibling pages via custom event */}
-      <SurveyCompletionBridge patientKey={patientKey} onComplete={update} />
+      {notAssigned.length > 0 && (
+        <section className="space-y-3">
+          <h2 className="signage-label text-inkMuted">No asignadas</h2>
+          <ul className="divide-y divide-line rounded-xl border border-line bg-canvas/50">
+            {notAssigned.map((item) => (
+              <li key={item.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
+                <div>
+                  <p className="text-sm font-bold text-inkMuted">{item.meta.shortLabel}</p>
+                  <p className="text-xs text-inkMuted">{item.meta.description}</p>
+                </div>
+                <span className="rounded-md bg-sunken px-2 py-1 text-xs font-bold text-inkMuted">
+                  No asignada
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
-}
-
-function SurveyCompletionBridge({
-  patientKey,
-  onComplete,
-}: {
-  patientKey: string;
-  onComplete: (
-    instrument: SurveyInstrumentId,
-    patch: Partial<InstrumentAssignment>
-  ) => void;
-}) {
-  useEffect(() => {
-    const handler = (event: Event) => {
-      const detail = (event as CustomEvent).detail as {
-        instrument: SurveyInstrumentId;
-        score: Record<string, unknown>;
-        patientKey?: string;
-      };
-      if (detail.patientKey && detail.patientKey !== patientKey) return;
-      onComplete(detail.instrument, {
-        lastCompletedAt: new Date().toISOString(),
-        lastScore: detail.score,
-        forceActive: false,
-        forceActivatedAt: null,
-      });
-    };
-    window.addEventListener('healthcloud:survey-complete', handler);
-    return () => window.removeEventListener('healthcloud:survey-complete', handler);
-  }, [onComplete, patientKey]);
-  return null;
 }
 
 export function markSurveyCompleted(
@@ -297,28 +349,23 @@ export function markSurveyCompleted(
   patientKey = 'camila-soto'
 ) {
   if (typeof window === 'undefined') return;
-  window.dispatchEvent(
-    new CustomEvent('healthcloud:survey-complete', {
-      detail: { instrument, score, patientKey },
-    })
-  );
 
-  // Persist even if inbox isn't mounted
   try {
     const store = readStore();
     const current = mergeSurveyConfig(store[patientKey]);
+    const summary = formatScoreSummary(instrument, score);
     store[patientKey] = {
       ...current,
-      [instrument]: {
-        ...current[instrument]!,
-        lastCompletedAt: new Date().toISOString(),
-        lastScore: score,
-        forceActive: false,
-        forceActivatedAt: null,
-      },
+      [instrument]: appendSurveyRecord(current[instrument]!, score, summary),
     };
     writeStore(store);
   } catch {
     // ignore
   }
+
+  window.dispatchEvent(
+    new CustomEvent('healthcloud:survey-complete', {
+      detail: { instrument, score, patientKey },
+    })
+  );
 }

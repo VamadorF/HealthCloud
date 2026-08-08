@@ -10,6 +10,8 @@ import { computePsqiScore, type PsqiAnswers } from '@/lib/clinical/psqi';
 import { computePcsScore } from '@/lib/clinical/pcs';
 import {
   SurveyConfig,
+  appendSurveyRecord,
+  formatScoreSummary,
   getSurveyAvailability,
   mergeSurveyConfig,
 } from '@/lib/clinical/survey-schedule';
@@ -38,20 +40,18 @@ export async function submitPatientPss(formData: FormData) {
     const answers = JSON.parse(String(formData.get('pssAnswers') ?? '[]')) as number[];
     const payload = buildPssPayload(answers);
     if (!payload) return;
-
+    const score = {
+      total: payload.total,
+      band: payload.band,
+      bandLabel: payload.bandLabel,
+    };
     await saveConfig(user.id, {
       ...config,
-      'PSS-14': {
-        ...config['PSS-14']!,
-        lastCompletedAt: payload.recordedAt,
-        lastScore: {
-          total: payload.total,
-          band: payload.band,
-          bandLabel: payload.bandLabel,
-        },
-        forceActive: false,
-        forceActivatedAt: null,
-      },
+      'PSS-14': appendSurveyRecord(
+        config['PSS-14']!,
+        score,
+        formatScoreSummary('PSS-14', score)
+      ),
     });
   } catch {
     return;
@@ -70,24 +70,18 @@ export async function submitPatientPsqi(formData: FormData) {
 
   try {
     const answers = JSON.parse(String(formData.get('psqiAnswers') ?? '{}')) as PsqiAnswers;
-    const score = computePsqiScore(answers);
-    if (!score.complete) return;
-
+    const result = computePsqiScore(answers);
+    if (!result.complete) return;
+    const score = {
+      global: result.global,
+      band: result.band,
+      bandLabel: result.bandLabel,
+      components: result.components,
+      efficiencyPercent: result.efficiencyPercent,
+    };
     await saveConfig(user.id, {
       ...config,
-      PSQI: {
-        ...config.PSQI!,
-        lastCompletedAt: new Date().toISOString(),
-        lastScore: {
-          global: score.global,
-          band: score.band,
-          bandLabel: score.bandLabel,
-          components: score.components,
-          efficiencyPercent: score.efficiencyPercent,
-        },
-        forceActive: false,
-        forceActivatedAt: null,
-      },
+      PSQI: appendSurveyRecord(config.PSQI!, score, formatScoreSummary('PSQI', score)),
     });
   } catch {
     return;
@@ -106,23 +100,17 @@ export async function submitPatientPcs(formData: FormData) {
 
   try {
     const answers = JSON.parse(String(formData.get('pcsAnswers') ?? '[]')) as number[];
-    const score = computePcsScore(answers);
-    if (!score.complete) return;
-
+    const result = computePcsScore(answers);
+    if (!result.complete) return;
+    const score = {
+      total: result.total,
+      band: result.band,
+      bandLabel: result.bandLabel,
+      subscales: result.subscales,
+    };
     await saveConfig(user.id, {
       ...config,
-      PCS: {
-        ...config.PCS!,
-        lastCompletedAt: new Date().toISOString(),
-        lastScore: {
-          total: score.total,
-          band: score.band,
-          bandLabel: score.bandLabel,
-          subscales: score.subscales,
-        },
-        forceActive: false,
-        forceActivatedAt: null,
-      },
+      PCS: appendSurveyRecord(config.PCS!, score, formatScoreSummary('PCS', score)),
     });
   } catch {
     return;

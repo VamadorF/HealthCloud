@@ -18,7 +18,7 @@ export default async function SpecialistPatientsPage() {
     <PlatformShell
       user={user}
       title="Pacientes"
-      description="Ficha clínica y control de encuestas PSS-14 / PSQI / PCS (cadencia 2 meses)"
+      description="Asigna encuestas por separado y consulta los registros del paciente"
     >
       <div className="space-y-6">
         {appointments.length === 0 ? (

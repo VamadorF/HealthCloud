@@ -6,7 +6,7 @@ export default function DemoPatientSurveysPage() {
     <DemoShell
       role="patient"
       title="Encuestas clínicas"
-      subtitle="PSS-14 y PSQI · disponibles cada 2 meses o cuando tu especialista las active"
+      subtitle="Solo las escalas que tu especialista te ha asignado y abierto"
     >
       <PatientSurveyInbox patientKey="camila-soto" />
     </DemoShell>
