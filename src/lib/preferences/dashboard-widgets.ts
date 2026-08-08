@@ -20,13 +20,13 @@ export const WIDGET_CATALOG: Record<DashboardRole, WidgetDefinition[]> = {
     {
       id: 'specialist.daySummary',
       label: 'Resumen del día',
-      description: 'Indicadores compactos: citas, pendientes y huecos.',
+      description: 'Indicadores de jornada: sala de espera, pendientes y huecos.',
       defaultVisible: false,
     },
     {
       id: 'specialist.nextStep',
-      label: 'Siguiente atención',
-      description: 'Paciente actual o próximo con acción para iniciar consulta.',
+      label: 'Atención en curso',
+      description: 'Paciente actual con acción para continuar la consulta.',
       defaultVisible: true,
     },
   ],
