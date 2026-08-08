@@ -1,8 +1,10 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
+import { buildPssPayload } from '@/lib/clinical/pss';
 
 export async function updateSchedule(formData: FormData) {
   const user = await requireRole('SPECIALIST');
@@ -40,6 +42,20 @@ export async function confirmAppointment(formData: FormData) {
   return;
 }
 
+function parsePssFromForm(formData: FormData) {
+  const complete = formData.get('pssComplete') === 'true';
+  if (!complete) return null;
+
+  try {
+    const answers = JSON.parse(String(formData.get('pssAnswers') ?? '[]')) as unknown;
+    if (!Array.isArray(answers) || answers.length !== 14) return null;
+    if (answers.some((a) => a == null || Number.isNaN(Number(a)))) return null;
+    return buildPssPayload(answers.map(Number));
+  } catch {
+    return null;
+  }
+}
+
 export async function recordConsultation(formData: FormData) {
   const user = await requireRole('SPECIALIST');
   const appointmentId = String(formData.get('appointmentId') ?? '');
@@ -67,6 +83,12 @@ export async function recordConsultation(formData: FormData) {
     return;
   }
 
+  const pss = parsePssFromForm(formData);
+  const clinicalData = {
+    notes: clinicalNotes,
+    ...(pss ? { pss } : {}),
+  } as unknown as Prisma.InputJsonValue;
+
   await prisma.$transaction([
     prisma.consultation.upsert({
       where: { appointmentId },
@@ -74,13 +96,13 @@ export async function recordConsultation(formData: FormData) {
         appointmentId,
         specialistId: user.id,
         diagnosis,
-        clinicalData: { notes: clinicalNotes },
+        clinicalData,
         treatment: treatmentData,
         vitals: vitalsData,
       },
       update: {
         diagnosis,
-        clinicalData: { notes: clinicalNotes },
+        clinicalData,
         treatment: treatmentData,
         vitals: vitalsData,
       },
