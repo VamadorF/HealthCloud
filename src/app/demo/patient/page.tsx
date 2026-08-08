@@ -74,16 +74,16 @@ export default function DemoPatientPage() {
           <Panel title="Acciones rápidas">
             <div className="grid gap-3">
               <Link
+                href="/demo/patient/surveys"
+                className="rounded-xl bg-canvas px-4 py-3 text-sm font-medium text-ink transition hover:bg-brand-light"
+              >
+                Encuestas clínicas →
+              </Link>
+              <Link
                 href="/demo/patient/symptoms"
                 className="rounded-xl bg-canvas px-4 py-3 text-sm font-medium text-ink transition hover:bg-brand-light"
               >
                 Registrar síntomas →
-              </Link>
-              <Link
-                href="/demo/patient/history"
-                className="rounded-xl bg-canvas px-4 py-3 text-sm font-medium text-ink transition hover:bg-brand-light"
-              >
-                Ver historial médico →
               </Link>
               <Link
                 href="/demo/patient/appointments"

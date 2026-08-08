@@ -137,6 +137,8 @@ model PatientProfile {
   bloodType        String?  @map("blood_type")
   allergies        Json?
   emergencyContact Json?    @map("emergency_contact")
+  /// Programación de encuestas clínicas (PSS-14, PSQI): enabled, forceActive, lastCompletedAt.
+  surveyConfig     Json?    @map("survey_config")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 

@@ -5,9 +5,15 @@ import { recordConsultation } from '@/app/specialist/actions';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PssScale, PssScoreSummary } from '@/components/clinical/pss-scale';
+import { PssScoreSummary } from '@/components/clinical/pss-scale';
+import { PsqiScoreSummary } from '@/components/clinical/psqi-scale';
 import { formatDateTime } from '@/utils/format';
 import type { PssBand, PssClinicalPayload } from '@/lib/clinical/pss';
+import type { PsqiBand } from '@/lib/clinical/psqi';
+import {
+  SurveyConfig,
+  mergeSurveyConfig,
+} from '@/lib/clinical/survey-schedule';
 
 type ClinicalData = {
   notes?: string;
@@ -22,7 +28,10 @@ export default async function SpecialistConsultationsPage() {
       specialistId: user.id,
       status: { in: ['CONFIRMED', 'IN_PROGRESS', 'COMPLETED'] },
     },
-    include: { patient: true, consultation: true },
+    include: {
+      patient: { include: { patientProfile: true } },
+      consultation: true,
+    },
     orderBy: { scheduledAt: 'desc' },
   });
 
@@ -30,11 +39,23 @@ export default async function SpecialistConsultationsPage() {
     <PlatformShell
       user={user}
       title="Consultas clínicas"
-      description="Registra diagnóstico, notas y evaluación de estrés percibido (PSS-14)"
+      description="Diagnóstico, notas y resultados de encuestas del paciente"
     >
       <div className="space-y-6">
         {appointments.map((appt) => {
           const clinical = (appt.consultation?.clinicalData ?? {}) as ClinicalData;
+          const survey = mergeSurveyConfig(
+            (appt.patient.patientProfile?.surveyConfig as SurveyConfig | null) ?? null
+          );
+          const pssScore = survey['PSS-14']?.lastScore as
+            | { total?: number; band?: PssBand; bandLabel?: string }
+            | null
+            | undefined;
+          const psqiScore = survey.PSQI?.lastScore as
+            | { global?: number; band?: PsqiBand; bandLabel?: string }
+            | null
+            | undefined;
+
           return (
             <div
               key={appt.id}
@@ -48,29 +69,36 @@ export default async function SpecialistConsultationsPage() {
                   <StatusBadge status={appt.status} />
                 </div>
                 <p className="mt-1 text-sm text-inkMuted">{formatDateTime(appt.scheduledAt)}</p>
-                {appt.reason && (
-                  <p className="mt-1 text-sm text-inkMuted">Motivo: {appt.reason}</p>
-                )}
               </div>
 
-              {appt.consultation ? (
-                <div className="space-y-4">
-                  <div className="rounded-lg bg-canvas p-4 text-sm text-ink">
-                    <p>
-                      <strong>Diagnóstico:</strong> {appt.consultation.diagnosis}
-                    </p>
-                    {clinical.notes && (
-                      <p className="mt-2">
-                        <strong>Notas:</strong> {clinical.notes}
-                      </p>
-                    )}
-                  </div>
-                  {clinical.pss && (
+              {(pssScore?.total != null || psqiScore?.global != null || clinical.pss) && (
+                <div className="mb-5 grid gap-3 sm:grid-cols-2">
+                  {(clinical.pss || pssScore?.total != null) && (
                     <PssScoreSummary
-                      total={clinical.pss.total}
-                      band={clinical.pss.band as PssBand}
-                      bandLabel={clinical.pss.bandLabel}
+                      total={clinical.pss?.total ?? pssScore!.total!}
+                      band={clinical.pss?.band ?? pssScore?.band}
+                      bandLabel={clinical.pss?.bandLabel ?? pssScore?.bandLabel}
                     />
+                  )}
+                  {psqiScore?.global != null && (
+                    <PsqiScoreSummary
+                      global={psqiScore.global}
+                      band={psqiScore.band}
+                      bandLabel={psqiScore.bandLabel}
+                    />
+                  )}
+                </div>
+              )}
+
+              {appt.consultation ? (
+                <div className="rounded-lg bg-canvas p-4 text-sm text-ink">
+                  <p>
+                    <strong>Diagnóstico:</strong> {appt.consultation.diagnosis}
+                  </p>
+                  {clinical.notes && (
+                    <p className="mt-2">
+                      <strong>Notas:</strong> {clinical.notes}
+                    </p>
                   )}
                 </div>
               ) : (
@@ -89,16 +117,16 @@ export default async function SpecialistConsultationsPage() {
                     name="clinicalNotes"
                     label="Notas clínicas"
                     rows={3}
-                    placeholder="Evolución, hallazgos relevantes, plan..."
                   />
                   <Input
                     name="treatment"
                     label="Tratamiento (JSON)"
                     defaultValue='{"medicamentos":[],"indicaciones":""}'
                   />
-
-                  <PssScale name="pss" />
-
+                  <p className="text-sm text-inkMuted">
+                    Las encuestas PSS-14 y PSQI se gestionan en Pacientes (activar /
+                    desactivar / forzar) y las responde el paciente.
+                  </p>
                   <div>
                     <SubmitButton>Registrar consulta</SubmitButton>
                   </div>

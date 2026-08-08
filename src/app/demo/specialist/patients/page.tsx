@@ -1,11 +1,35 @@
 import { DemoShell, Panel, StatusPill } from '@/components/demo/demo-shell';
-import { DataTable } from '@/components/platform/platform-shell';
+import { SpecialistSurveyControls } from '@/components/clinical/survey-controls';
 
 const PATIENTS = [
-  { name: 'Camila Soto', age: '34 años', last: 'Control hipertensión · 12 Mar', tag: 'Seguimiento' },
-  { name: 'Roberto Díaz', age: '58 años', last: 'Diabetes · Hoy', tag: 'Crónico' },
-  { name: 'María José Vera', age: '41 años', last: 'Dislipidemia · Ayer', tag: 'Seguimiento' },
-  { name: 'Felipe Arancibia', age: '29 años', last: 'Primera consulta · Pendiente', tag: 'Nuevo' },
+  {
+    key: 'camila-soto',
+    name: 'Camila Soto',
+    age: '34 años',
+    last: 'Control hipertensión · 12 Mar',
+    tag: 'Seguimiento',
+  },
+  {
+    key: 'roberto-diaz',
+    name: 'Roberto Díaz',
+    age: '58 años',
+    last: 'Diabetes · Hoy',
+    tag: 'Crónico',
+  },
+  {
+    key: 'maria-jose-vera',
+    name: 'María José Vera',
+    age: '41 años',
+    last: 'Dislipidemia · Ayer',
+    tag: 'Seguimiento',
+  },
+  {
+    key: 'felipe-arancibia',
+    name: 'Felipe Arancibia',
+    age: '29 años',
+    last: 'Primera consulta · Pendiente',
+    tag: 'Nuevo',
+  },
 ];
 
 export default function DemoSpecialistPatientsPage() {
@@ -13,23 +37,26 @@ export default function DemoSpecialistPatientsPage() {
     <DemoShell
       role="specialist"
       title="Mis pacientes"
-      subtitle="Personas bajo tu supervisión clínica"
+      subtitle="Ficha clínica y programación de encuestas (PSS-14 · PSQI)"
     >
-      <Panel title="Lista de pacientes" flush>
-        <DataTable
-          headers={['Paciente', 'Edad', 'Última atención', 'Seguimiento']}
-          empty="Aún no tienes pacientes asignados."
-          rows={PATIENTS.map((patient) => ({
-            key: patient.name,
-            cells: [
-              patient.name,
-              patient.age,
-              patient.last,
-              <StatusPill key="tag" status={patient.tag} />,
-            ],
-          }))}
-        />
-      </Panel>
+      <div className="space-y-6">
+        {PATIENTS.map((patient) => (
+          <Panel
+            key={patient.key}
+            title={patient.name}
+            action={<StatusPill status={patient.tag} />}
+          >
+            <div className="mb-5 flex flex-wrap gap-4 text-sm text-inkMuted">
+              <span>{patient.age}</span>
+              <span>{patient.last}</span>
+            </div>
+            <SpecialistSurveyControls
+              patientKey={patient.key}
+              patientName={patient.name}
+            />
+          </Panel>
+        ))}
+      </div>
     </DemoShell>
   );
 }

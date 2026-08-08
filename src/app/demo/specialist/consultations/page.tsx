@@ -1,5 +1,6 @@
 import { DemoShell, Panel } from '@/components/demo/demo-shell';
-import { PssScale, PssScoreSummary } from '@/components/clinical/pss-scale';
+import { PssScoreSummary } from '@/components/clinical/pss-scale';
+import { PsqiScoreSummary } from '@/components/clinical/psqi-scale';
 
 const CONSULTATIONS = [
   {
@@ -9,6 +10,7 @@ const CONSULTATIONS = [
     notes: 'HbA1c 6.8%. Mantener metformina 850mg. Reforzar plan alimentario.',
     vitals: 'PA 128/82 · FC 72',
     pss: { total: 24, band: 'moderate' as const, bandLabel: 'Estrés percibido moderado' },
+    psqi: { global: 8, band: 'poor' as const, bandLabel: 'Mala calidad de sueño' },
   },
   {
     patient: 'María José Vera',
@@ -24,7 +26,7 @@ export default function DemoSpecialistConsultationsPage() {
     <DemoShell
       role="specialist"
       title="Consultas clínicas"
-      subtitle="Registro de atenciones con escalas clínicas estructuradas"
+      subtitle="Resultados de encuestas en la atención · activa o desactiva desde Pacientes"
     >
       <div className="space-y-6">
         {CONSULTATIONS.map((c) => (
@@ -42,30 +44,37 @@ export default function DemoSpecialistConsultationsPage() {
                 <p className="signage-label text-inkMuted">Notas clínicas</p>
                 <p className="mt-1 text-sm leading-relaxed text-inkMuted">{c.notes}</p>
               </div>
-              {c.pss && (
-                <div className="sm:col-span-2">
-                  <PssScoreSummary
-                    total={c.pss.total}
-                    band={c.pss.band}
-                    bandLabel={c.pss.bandLabel}
-                  />
+              {(c.pss || c.psqi) && (
+                <div className="grid gap-3 sm:col-span-2 sm:grid-cols-2">
+                  {c.pss && (
+                    <PssScoreSummary
+                      total={c.pss.total}
+                      band={c.pss.band}
+                      bandLabel={c.pss.bandLabel}
+                    />
+                  )}
+                  {c.psqi && (
+                    <PsqiScoreSummary
+                      global={c.psqi.global}
+                      band={c.psqi.band}
+                      bandLabel={c.psqi.bandLabel}
+                    />
+                  )}
                 </div>
               )}
             </div>
           </Panel>
         ))}
 
-        <Panel title="Nueva evaluación · PSS-14">
-          <div className="space-y-4">
-            <p className="text-sm leading-6 text-inkMuted">
-              Complete la Escala de Estrés Percibido durante o tras la consulta. La puntuación
-              se calcula en vivo invirtiendo los ítems de afrontamiento.
-            </p>
-            <PssScale
-              name="demoPss"
-              defaultAnswers={[2, 3, 3, 1, 2, 1, 2, 3, 1, 1, 2, 3, 2, 2]}
-            />
-          </div>
+        <Panel title="Programación de encuestas">
+          <p className="text-sm leading-6 text-inkMuted">
+            Las escalas PSS-14 y PSQI se responden en la cuenta del paciente. Desde{' '}
+            <a href="/demo/specialist/patients" className="font-bold text-brand-mid hover:underline">
+              Pacientes
+            </a>{' '}
+            puedes activarlas, desactivarlas o forzar una ventana fuera de la cadencia de 2
+            meses.
+          </p>
         </Panel>
       </div>
     </DemoShell>

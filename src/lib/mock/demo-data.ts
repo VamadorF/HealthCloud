@@ -68,6 +68,7 @@ export const DEMO_NAV: Record<DemoRole, { href: string; label: string }[]> = {
     { href: '/demo/patient', label: 'Inicio' },
     { href: '/demo/patient/appointments', label: 'Mis citas' },
     { href: '/demo/patient/symptoms', label: 'Síntomas' },
+    { href: '/demo/patient/surveys', label: 'Encuestas' },
     { href: '/demo/patient/history', label: 'Historial' },
     { href: '/demo/patient/settings', label: 'Ajustes' },
   ],

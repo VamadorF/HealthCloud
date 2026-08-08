@@ -30,6 +30,7 @@ export const ROLE_NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { href: '/patient', label: 'Inicio' },
     { href: '/patient/appointments', label: 'Solicitar hora' },
     { href: '/patient/symptoms', label: 'Registrar síntomas' },
+    { href: '/patient/surveys', label: 'Encuestas' },
     { href: '/patient/history', label: 'Historial médico' },
     { href: '/settings', label: 'Ajustes' },
   ],
