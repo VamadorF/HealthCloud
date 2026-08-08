@@ -257,18 +257,29 @@ export function TimelineItem({
 }) {
   return (
     <div
-      className={`flex gap-4 border-l-2 pl-5 pb-6 last:pb-0 ${
-        accent ? 'border-brand bg-brand-light/30 -ml-px rounded-r-lg py-3 pr-3' : 'border-brand-soft'
+      className={`flex flex-col gap-2 border-l-2 pl-4 pb-5 last:pb-0 sm:flex-row sm:items-start sm:gap-4 sm:pl-5 sm:pb-6 ${
+        accent
+          ? 'border-brand bg-brand-light/30 -ml-px rounded-r-lg py-3 pr-3'
+          : 'border-brand-soft'
       }`}
     >
-      <div className="w-14 shrink-0">
+      <div className="flex items-center justify-between gap-3 sm:block sm:w-14 sm:shrink-0">
         <p className="font-display text-sm font-semibold text-brand-mid tabular-nums">{time}</p>
+        {status && (
+          <span className="sm:hidden">
+            <StatusPill status={status} />
+          </span>
+        )}
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-bold text-ink">{title}</p>
-        <p className="mt-0.5 text-sm text-inkMuted">{meta}</p>
+        <p className="mt-0.5 text-sm leading-5 text-inkMuted">{meta}</p>
       </div>
-      {status && <StatusPill status={status} />}
+      {status && (
+        <span className="hidden sm:inline-flex">
+          <StatusPill status={status} />
+        </span>
+      )}
     </div>
   );
 }
