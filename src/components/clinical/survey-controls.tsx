@@ -209,7 +209,7 @@ export function PatientSurveyInbox({ patientKey }: { patientKey: string }) {
           {available.map((item) => (
             <a
               key={item.id}
-              href={`/demo/patient/surveys/${item.id === 'PSS-14' ? 'pss' : 'psqi'}`}
+              href={`/demo/patient/surveys/${item.meta.slug}`}
               className="block rounded-xl border border-line bg-surface p-5 shadow-card transition duration-200 ease-out-soft hover:border-brand/30"
             >
               <div className="flex items-start justify-between gap-3">

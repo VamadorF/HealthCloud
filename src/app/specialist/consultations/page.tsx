@@ -7,9 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { PssScoreSummary } from '@/components/clinical/pss-scale';
 import { PsqiScoreSummary } from '@/components/clinical/psqi-scale';
+import { PcsScoreSummary } from '@/components/clinical/pcs-scale';
 import { formatDateTime } from '@/utils/format';
 import type { PssBand, PssClinicalPayload } from '@/lib/clinical/pss';
 import type { PsqiBand } from '@/lib/clinical/psqi';
+import type { PcsBand } from '@/lib/clinical/pcs';
 import {
   SurveyConfig,
   mergeSurveyConfig,
@@ -55,6 +57,10 @@ export default async function SpecialistConsultationsPage() {
             | { global?: number; band?: PsqiBand; bandLabel?: string }
             | null
             | undefined;
+          const pcsScore = survey.PCS?.lastScore as
+            | { total?: number; band?: PcsBand; bandLabel?: string }
+            | null
+            | undefined;
 
           return (
             <div
@@ -71,8 +77,11 @@ export default async function SpecialistConsultationsPage() {
                 <p className="mt-1 text-sm text-inkMuted">{formatDateTime(appt.scheduledAt)}</p>
               </div>
 
-              {(pssScore?.total != null || psqiScore?.global != null || clinical.pss) && (
-                <div className="mb-5 grid gap-3 sm:grid-cols-2">
+              {(pssScore?.total != null ||
+                psqiScore?.global != null ||
+                pcsScore?.total != null ||
+                clinical.pss) && (
+                <div className="mb-5 grid gap-3 sm:grid-cols-3">
                   {(clinical.pss || pssScore?.total != null) && (
                     <PssScoreSummary
                       total={clinical.pss?.total ?? pssScore!.total!}
@@ -85,6 +94,13 @@ export default async function SpecialistConsultationsPage() {
                       global={psqiScore.global}
                       band={psqiScore.band}
                       bandLabel={psqiScore.bandLabel}
+                    />
+                  )}
+                  {pcsScore?.total != null && (
+                    <PcsScoreSummary
+                      total={pcsScore.total}
+                      band={pcsScore.band}
+                      bandLabel={pcsScore.bandLabel}
                     />
                   )}
                 </div>
@@ -124,7 +140,7 @@ export default async function SpecialistConsultationsPage() {
                     defaultValue='{"medicamentos":[],"indicaciones":""}'
                   />
                   <p className="text-sm text-inkMuted">
-                    Las encuestas PSS-14 y PSQI se gestionan en Pacientes (activar /
+                    Las encuestas PSS-14, PSQI y PCS se gestionan en Pacientes (activar /
                     desactivar / forzar) y las responde el paciente.
                   </p>
                   <div>

@@ -37,7 +37,7 @@ export default function DemoSpecialistPatientsPage() {
     <DemoShell
       role="specialist"
       title="Mis pacientes"
-      subtitle="Ficha clínica y programación de encuestas (PSS-14 · PSQI)"
+      subtitle="Ficha clínica y programación de encuestas (PSS-14 · PSQI · PCS)"
     >
       <div className="space-y-6">
         {PATIENTS.map((patient) => (

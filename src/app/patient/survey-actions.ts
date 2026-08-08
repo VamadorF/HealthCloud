@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
 import { buildPssPayload } from '@/lib/clinical/pss';
 import { computePsqiScore, type PsqiAnswers } from '@/lib/clinical/psqi';
+import { computePcsScore } from '@/lib/clinical/pcs';
 import {
   SurveyConfig,
   getSurveyAvailability,
@@ -83,6 +84,41 @@ export async function submitPatientPsqi(formData: FormData) {
           bandLabel: score.bandLabel,
           components: score.components,
           efficiencyPercent: score.efficiencyPercent,
+        },
+        forceActive: false,
+        forceActivatedAt: null,
+      },
+    });
+  } catch {
+    return;
+  }
+
+  revalidatePath('/patient/surveys');
+  revalidatePath('/specialist/patients');
+  redirect('/patient/surveys');
+}
+
+export async function submitPatientPcs(formData: FormData) {
+  const user = await requireRole('PATIENT');
+  const config = await loadWritableConfig(user.id);
+  const availability = getSurveyAvailability(config.PCS);
+  if (availability.status !== 'available') return;
+
+  try {
+    const answers = JSON.parse(String(formData.get('pcsAnswers') ?? '[]')) as number[];
+    const score = computePcsScore(answers);
+    if (!score.complete) return;
+
+    await saveConfig(user.id, {
+      ...config,
+      PCS: {
+        ...config.PCS!,
+        lastCompletedAt: new Date().toISOString(),
+        lastScore: {
+          total: score.total,
+          band: score.band,
+          bandLabel: score.bandLabel,
+          subscales: score.subscales,
         },
         forceActive: false,
         forceActivatedAt: null,

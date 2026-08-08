@@ -21,7 +21,7 @@ export default async function PatientSurveysPage() {
     meta: SURVEY_INSTRUMENTS[id],
     assignment: config[id]!,
     availability: getSurveyAvailability(config[id]),
-    href: id === 'PSS-14' ? '/patient/surveys/pss' : '/patient/surveys/psqi',
+    href: `/patient/surveys/${SURVEY_INSTRUMENTS[id].slug}`,
   }));
 
   const available = rows.filter((r) => r.availability.status === 'available');

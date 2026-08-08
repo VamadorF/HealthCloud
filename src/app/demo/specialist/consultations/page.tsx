@@ -1,6 +1,7 @@
 import { DemoShell, Panel } from '@/components/demo/demo-shell';
 import { PssScoreSummary } from '@/components/clinical/pss-scale';
 import { PsqiScoreSummary } from '@/components/clinical/psqi-scale';
+import { PcsScoreSummary } from '@/components/clinical/pcs-scale';
 
 const CONSULTATIONS = [
   {
@@ -11,6 +12,7 @@ const CONSULTATIONS = [
     vitals: 'PA 128/82 · FC 72',
     pss: { total: 24, band: 'moderate' as const, bandLabel: 'Estrés percibido moderado' },
     psqi: { global: 8, band: 'poor' as const, bandLabel: 'Mala calidad de sueño' },
+    pcs: { total: 34, band: 'clinical' as const, bandLabel: 'Nivel clínicamente significativo' },
   },
   {
     patient: 'María José Vera',
@@ -44,8 +46,8 @@ export default function DemoSpecialistConsultationsPage() {
                 <p className="signage-label text-inkMuted">Notas clínicas</p>
                 <p className="mt-1 text-sm leading-relaxed text-inkMuted">{c.notes}</p>
               </div>
-              {(c.pss || c.psqi) && (
-                <div className="grid gap-3 sm:col-span-2 sm:grid-cols-2">
+              {(c.pss || c.psqi || c.pcs) && (
+                <div className="grid gap-3 sm:col-span-2 sm:grid-cols-3">
                   {c.pss && (
                     <PssScoreSummary
                       total={c.pss.total}
@@ -60,6 +62,13 @@ export default function DemoSpecialistConsultationsPage() {
                       bandLabel={c.psqi.bandLabel}
                     />
                   )}
+                  {c.pcs && (
+                    <PcsScoreSummary
+                      total={c.pcs.total}
+                      band={c.pcs.band}
+                      bandLabel={c.pcs.bandLabel}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -68,7 +77,7 @@ export default function DemoSpecialistConsultationsPage() {
 
         <Panel title="Programación de encuestas">
           <p className="text-sm leading-6 text-inkMuted">
-            Las escalas PSS-14 y PSQI se responden en la cuenta del paciente. Desde{' '}
+            Las escalas PSS-14, PSQI y PCS se responden en la cuenta del paciente. Desde{' '}
             <a href="/demo/specialist/patients" className="font-bold text-brand-mid hover:underline">
               Pacientes
             </a>{' '}
