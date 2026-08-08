@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
 import { PlatformShell, Panel, DataTable } from '@/components/platform/platform-shell';
-import { formatDateTime } from '@/utils/format';
 
 export default async function SpecialistPatientsPage() {
   const user = await requireRole('SPECIALIST');
@@ -17,21 +16,30 @@ export default async function SpecialistPatientsPage() {
     <PlatformShell
       user={user}
       title="Pacientes"
-      description="Información clínica de los pacientes en tu agenda"
+      description="Ficha clínica básica. El cronograma de citas está en Agenda."
     >
       <Panel title="Pacientes asignados">
         <DataTable
-          headers={['Paciente', 'Contacto', 'Tipo de sangre', 'Próxima cita']}
+          headers={['Paciente', 'Contacto', 'Tipo de sangre', 'Alergias']}
           empty="Aún no tienes pacientes asignados."
-          rows={appointments.map((appt) => ({
-            key: appt.patient.id,
-            cells: [
-              appt.patient.fullName ?? appt.patient.email,
-              appt.patient.email,
-              appt.patient.patientProfile?.bloodType ?? 'Sin registrar',
-              formatDateTime(appt.scheduledAt),
-            ],
-          }))}
+          rows={appointments.map((appt) => {
+            const allergies = appt.patient.patientProfile?.allergies;
+            const allergyLabel = Array.isArray(allergies)
+              ? allergies.length > 0
+                ? allergies.map(String).join(', ')
+                : 'Sin registrar'
+              : 'Sin registrar';
+
+            return {
+              key: appt.patient.id,
+              cells: [
+                appt.patient.fullName ?? appt.patient.email,
+                appt.patient.email,
+                appt.patient.patientProfile?.bloodType ?? 'Sin registrar',
+                allergyLabel,
+              ],
+            };
+          })}
         />
       </Panel>
     </PlatformShell>

@@ -1,6 +1,9 @@
-import { DemoShell, MetricGrid, Panel, TimelineItem } from '@/components/demo/demo-shell';
+import { DemoShell, Panel, TimelineItem, MetricGrid } from '@/components/demo/demo-shell';
+import { WidgetGate } from '@/components/platform/widget-preferences';
 import { SPECIALIST_AGENDA } from '@/lib/mock/demo-data';
 import Link from 'next/link';
+
+const CURRENT = SPECIALIST_AGENDA.find((item) => item.status === 'En sala') ?? SPECIALIST_AGENDA[0];
 
 export default function DemoSpecialistPage() {
   return (
@@ -9,42 +12,96 @@ export default function DemoSpecialistPage() {
       title="Agenda de hoy"
       subtitle="Miércoles 9 de abril · Medicina interna · Box 3"
     >
-      <MetricGrid
-        items={[
-          { label: 'Citas programadas', value: '4', delta: '1 en sala de espera' },
-          { label: 'Consultas por registrar', value: '2', delta: 'De ayer' },
-          { label: 'Pacientes en seguimiento', value: '98', delta: 'Activos' },
-          { label: 'Próximo hueco', value: '12:00', delta: 'Disponible' },
-        ]}
-      />
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <Panel title="Timeline del día">
-          {SPECIALIST_AGENDA.map((item) => (
-            <TimelineItem
-              key={item.time}
-              time={item.time}
-              title={item.patient}
-              meta={`${item.reason} · ${item.room}`}
-              status={item.status}
-            />
-          ))}
-        </Panel>
-
+      {/* Focal: cronograma clínico — no un dashboard de métricas */}
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.9fr)]">
         <Panel
-          title="Siguiente paso"
-          action={<Link href="/demo/specialist/consultations" className="text-sm text-brand hover:underline">Ir a consultas</Link>}
+          title="Cronograma"
+          action={
+            <span className="text-xs tabular-nums text-inkMuted">
+              {SPECIALIST_AGENDA.length} atenciones · 09:00–11:15
+            </span>
+          }
         >
-          <div className="rounded-xl bg-canvas p-5">
-            <p className="text-xs font-medium text-brand">Ahora · 09:45</p>
-            <p className="mt-2 font-display text-xl text-ink">Roberto Díaz</p>
-            <p className="mt-1 text-sm text-inkMuted">Seguimiento diabetes · En sala de espera</p>
-            <button className="mt-5 rounded-lg bg-brand px-5 py-2 text-sm font-display text-white transition-colors duration-200 ease-out-soft hover:bg-brand-dark">
-              Iniciar consulta
-            </button>
+          <div className="space-y-0">
+            {SPECIALIST_AGENDA.map((item) => (
+              <TimelineItem
+                key={item.time}
+                time={item.time}
+                title={item.patient}
+                meta={`${item.reason} · ${item.room}`}
+                status={item.status}
+                accent={item.status === 'En sala'}
+              />
+            ))}
           </div>
         </Panel>
+
+        <div className="space-y-6">
+          <WidgetGate id="specialist.nextStep">
+            <Panel
+              title="En curso"
+              action={
+                <Link
+                  href="/demo/specialist/consultations"
+                  className="text-sm font-bold text-brand-mid hover:underline"
+                >
+                  Consultas
+                </Link>
+              }
+            >
+              <div className="rounded-xl border border-brand/20 bg-brand-light/40 px-5 py-5">
+                <p className="signage-label text-brand-mid">Ahora · {CURRENT.time}</p>
+                <p className="mt-2 font-display text-xl text-ink">{CURRENT.patient}</p>
+                <p className="mt-1 text-sm text-inkMuted">
+                  {CURRENT.reason} · {CURRENT.room}
+                </p>
+                <p className="mt-3 text-sm font-medium text-brand-mid">{CURRENT.status}</p>
+                <Link
+                  href="/demo/specialist/consultations"
+                  className="mt-5 inline-flex rounded-lg bg-brand px-5 py-2.5 text-sm font-display text-white transition-colors duration-200 ease-out-soft hover:bg-brand-dark active:scale-[0.98]"
+                >
+                  Continuar consulta
+                </Link>
+              </div>
+            </Panel>
+          </WidgetGate>
+
+          <section className="rounded-xl border border-line bg-surface px-5 py-4 shadow-card">
+            <p className="signage-label text-inkMuted">Jornada</p>
+            <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <dt className="text-inkMuted">Sala de espera</dt>
+                <dd className="mt-0.5 font-display text-lg tabular-nums text-ink">1</dd>
+              </div>
+              <div>
+                <dt className="text-inkMuted">Por confirmar</dt>
+                <dd className="mt-0.5 font-display text-lg tabular-nums text-ink">1</dd>
+              </div>
+              <div>
+                <dt className="text-inkMuted">Próximo hueco</dt>
+                <dd className="mt-0.5 font-display text-lg tabular-nums text-ink">12:00</dd>
+              </div>
+              <div>
+                <dt className="text-inkMuted">Box asignado</dt>
+                <dd className="mt-0.5 font-display text-lg text-ink">3</dd>
+              </div>
+            </dl>
+          </section>
+        </div>
       </div>
+
+      <WidgetGate id="specialist.daySummary">
+        <div className="mt-8">
+          <MetricGrid
+            items={[
+              { label: 'Citas programadas', value: '4', delta: '1 en sala de espera' },
+              { label: 'Consultas por registrar', value: '2', delta: 'De ayer' },
+              { label: 'Pacientes en seguimiento', value: '98', delta: 'Activos' },
+              { label: 'Próximo hueco', value: '12:00', delta: 'Disponible' },
+            ]}
+          />
+        </div>
+      </WidgetGate>
     </DemoShell>
   );
 }

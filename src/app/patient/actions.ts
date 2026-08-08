@@ -37,17 +37,21 @@ export async function reportSymptoms(formData: FormData) {
   const description = String(formData.get('description') ?? '').trim();
   const urgencyLevel = String(formData.get('urgencyLevel') ?? 'MEDIUM') as UrgencyLevel;
   const bodyAreas = String(formData.get('bodyAreas') ?? '[]');
-  const visualSymptoms = String(formData.get('visualSymptoms') ?? '{}');
   const duration = String(formData.get('duration') ?? '').trim();
   const isEmergency = formData.get('isEmergency') === 'true';
+  const rawPain = formData.get('painScore');
+  const painScore =
+    rawPain == null || rawPain === ''
+      ? null
+      : Math.min(10, Math.max(0, Number.parseInt(String(rawPain), 10)));
 
   if (!description) return;
+  if (painScore != null && Number.isNaN(painScore)) return;
 
-  let bodyAreasData: object;
-  let visualSymptomsData: object;
+  let bodyAreasData: string[];
   try {
-    bodyAreasData = JSON.parse(bodyAreas);
-    visualSymptomsData = JSON.parse(visualSymptoms);
+    const parsed = JSON.parse(bodyAreas);
+    bodyAreasData = Array.isArray(parsed) ? parsed.map(String) : [];
   } catch {
     return;
   }
@@ -57,13 +61,14 @@ export async function reportSymptoms(formData: FormData) {
       patientId: user.id,
       description,
       urgencyLevel,
+      painScore,
       bodyAreas: bodyAreasData,
-      visualSymptoms: visualSymptomsData,
       duration: duration || null,
-      isEmergency,
+      isEmergency: isEmergency || (painScore != null && painScore >= 8),
     },
   });
 
   revalidatePath('/patient/symptoms');
+  revalidatePath('/patient');
   return;
 }

@@ -50,22 +50,26 @@ export const DEMO_NAV: Record<DemoRole, { href: string; label: string }[]> = {
     { href: '/demo/admin/organizations', label: 'Organizaciones' },
     { href: '/demo/admin/reports', label: 'Reportes' },
     { href: '/demo/admin/invitations', label: 'Invitaciones' },
+    { href: '/demo/admin/settings', label: 'Ajustes' },
   ],
   organization: [
     { href: '/demo/organization', label: 'Resumen' },
     { href: '/demo/organization/profile', label: 'Perfil corporativo' },
     { href: '/demo/organization/specialists', label: 'Especialistas' },
+    { href: '/demo/organization/settings', label: 'Ajustes' },
   ],
   specialist: [
     { href: '/demo/specialist', label: 'Agenda' },
     { href: '/demo/specialist/consultations', label: 'Consultas' },
     { href: '/demo/specialist/patients', label: 'Pacientes' },
+    { href: '/demo/specialist/settings', label: 'Ajustes' },
   ],
   patient: [
     { href: '/demo/patient', label: 'Inicio' },
     { href: '/demo/patient/appointments', label: 'Mis citas' },
     { href: '/demo/patient/symptoms', label: 'Síntomas' },
     { href: '/demo/patient/history', label: 'Historial' },
+    { href: '/demo/patient/settings', label: 'Ajustes' },
   ],
 };
 
@@ -116,8 +120,20 @@ export const PATIENT_HISTORY = [
 ];
 
 export const PATIENT_SYMPTOMS = [
-  { date: 'Ayer, 22:14', level: 'Media', text: 'Dolor de cabeza persistente desde la tarde, sin fiebre.' },
-  { date: '03 Abr, 08:02', level: 'Baja', text: 'Ligera fatiga tras cambio de medicación.' },
+  {
+    date: 'Ayer, 22:14',
+    level: 'Media',
+    text: 'Dolor de cabeza persistente desde la tarde, sin fiebre.',
+    painScore: 5,
+    bodyAreas: ['cabeza'],
+  },
+  {
+    date: '03 Abr, 08:02',
+    level: 'Baja',
+    text: 'Ligera fatiga tras cambio de medicación.',
+    painScore: 2,
+    bodyAreas: ['generalizado'],
+  },
 ];
 
 export const ARCHITECTURE_LAYERS = [

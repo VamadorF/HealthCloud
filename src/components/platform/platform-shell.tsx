@@ -6,6 +6,8 @@ import { ROLE_THEMES } from '@/components/platform/role-theme';
 import { AccessibilityControls } from '@/components/platform/accessibility';
 import { GuidedTour } from '@/components/platform/guided-tour';
 import { getTourRole } from '@/lib/tour/steps';
+import { WidgetPreferencesProvider } from '@/components/platform/widget-preferences';
+import type { DashboardRole } from '@/lib/preferences/dashboard-widgets';
 
 const ROLE_CONTEXT: Record<UserRole, string> = {
   ADMIN: 'Administración general',
@@ -30,75 +32,84 @@ export function PlatformShell({ user, title, description, children }: PlatformSh
   const nav = getRoleNav(user.role);
   const tone = getTourRole(user.role);
   const theme = ROLE_THEMES[tone];
+  const dashboardRole = tone as DashboardRole;
 
   return (
-    <div className="relative min-h-screen bg-canvas lg:flex">
-      {/* Línea de guía del rol */}
-      <span aria-hidden="true" className={`absolute inset-y-0 left-0 z-20 w-1 ${theme.line}`} />
+    <WidgetPreferencesProvider role={dashboardRole}>
+      <div className="relative min-h-screen bg-canvas lg:flex">
+        {/* Línea de guía del rol */}
+        <span aria-hidden="true" className={`absolute inset-y-0 left-0 z-20 w-1 ${theme.line}`} />
 
-      <aside
-        data-tour="nav"
-        className="flex flex-col gap-5 border-b border-line px-5 pb-4 pt-5 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:overflow-x-hidden lg:border-b-0 lg:border-r lg:px-6 lg:pb-6 lg:pt-7"
-      >
-        <div>
-          <Link href="/" className="font-display text-lg text-ink">
-            HealthCloud
-          </Link>
-          <p className={`signage-label mt-1.5 ${theme.text}`}>{ROLE_CONTEXT[user.role]}</p>
-        </div>
-
-        <SidebarNav items={nav} tone={tone} />
-
-        <div className="flex items-center justify-between gap-4 border-t border-line pt-4 lg:mt-auto lg:flex-col lg:items-stretch lg:gap-3">
-          <p className="min-w-0 truncate text-sm font-bold text-ink">
-            {user.fullName ?? user.email}
-          </p>
-          <div className="flex shrink-0 items-center gap-4">
-            <Link
-              href="/profile"
-              className="text-sm font-bold text-brand-mid transition-colors duration-200 ease-out-soft hover:text-ink"
-            >
-              Mi cuenta
-            </Link>
-            <form action="/auth/signout" method="post">
-              <button
-                type="submit"
-                className="text-sm font-bold text-inkMuted transition-colors duration-200 ease-out-soft hover:text-ink"
-              >
-                Cerrar sesión
-              </button>
-            </form>
-          </div>
-        </div>
-      </aside>
-
-      <div className="min-w-0 flex-1">
-        <header
-          data-tour="header"
-          className="flex items-center justify-between gap-4 border-b border-line px-5 py-3.5 sm:px-8"
+        <aside
+          data-tour="nav"
+          className="flex flex-col gap-5 border-b border-line px-5 pb-4 pt-5 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:overflow-x-hidden lg:border-b-0 lg:border-r lg:px-6 lg:pb-6 lg:pt-7"
         >
-          <LocationCrumb roleLabel={getRoleLabel(user.role)} items={nav} tone={tone} />
-          <div className="flex shrink-0 items-center gap-2">
-            <GuidedTour role={tone} roleLabel={getRoleLabel(user.role)} />
-            <AccessibilityControls />
+          <div>
+            <Link href="/" className="font-display text-lg text-ink">
+              HealthCloud
+            </Link>
+            <p className={`signage-label mt-1.5 ${theme.text}`}>{ROLE_CONTEXT[user.role]}</p>
           </div>
-        </header>
 
-        <main className="mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 lg:py-10">
-          <div className="max-w-3xl">
-            <h1 className="font-display text-[1.75rem] leading-tight text-ink sm:text-[2rem]">
-              {title}
-            </h1>
-            {description && (
-              <p className="mt-2 text-base leading-6 text-inkMuted">{description}</p>
-            )}
+          <SidebarNav items={nav} tone={tone} />
+
+          <div className="flex items-center justify-between gap-4 border-t border-line pt-4 lg:mt-auto lg:flex-col lg:items-stretch lg:gap-3">
+            <p className="min-w-0 truncate text-sm font-bold text-ink">
+              {user.fullName ?? user.email}
+            </p>
+            <div className="flex shrink-0 items-center gap-4">
+              <Link
+                href="/settings"
+                className="text-sm font-bold text-brand-mid transition-colors duration-200 ease-out-soft hover:text-ink"
+              >
+                Ajustes
+              </Link>
+              <Link
+                href="/profile"
+                className="text-sm font-bold text-brand-mid transition-colors duration-200 ease-out-soft hover:text-ink"
+              >
+                Mi cuenta
+              </Link>
+              <form action="/auth/signout" method="post">
+                <button
+                  type="submit"
+                  className="text-sm font-bold text-inkMuted transition-colors duration-200 ease-out-soft hover:text-ink"
+                >
+                  Cerrar sesión
+                </button>
+              </form>
+            </div>
           </div>
-          <div data-tour="content" className="mt-8">
-            {children}
-          </div>
-        </main>
+        </aside>
+
+        <div className="min-w-0 flex-1">
+          <header
+            data-tour="header"
+            className="flex items-center justify-between gap-4 border-b border-line px-5 py-3.5 sm:px-8"
+          >
+            <LocationCrumb roleLabel={getRoleLabel(user.role)} items={nav} tone={tone} />
+            <div className="flex shrink-0 items-center gap-2">
+              <GuidedTour role={tone} roleLabel={getRoleLabel(user.role)} />
+              <AccessibilityControls />
+            </div>
+          </header>
+
+          <main className="mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 lg:py-10">
+            <div className="max-w-3xl">
+              <h1 className="font-display text-[1.75rem] leading-tight text-ink sm:text-[2rem]">
+                {title}
+              </h1>
+              {description && (
+                <p className="mt-2 text-base leading-6 text-inkMuted">{description}</p>
+              )}
+            </div>
+            <div data-tour="content" className="mt-8">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </WidgetPreferencesProvider>
   );
 }
 

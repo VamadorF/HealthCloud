@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
 import { PlatformShell, StatCard, Panel, Row } from '@/components/platform/platform-shell';
+import { WidgetGate } from '@/components/platform/widget-preferences';
 
 export default async function OrganizationDashboardPage() {
   const user = await requireRole('ORGANIZATION');
@@ -22,14 +23,20 @@ export default async function OrganizationDashboardPage() {
       title="Panel de Organización"
       description="Gestiona tu perfil corporativo y la plantilla médica de tu centro"
     >
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Especialistas activos" value={activeSpecialists} />
-        <StatCard label="Citas asociadas" value={organization?.appointments.length ?? 0} />
-        <StatCard
-          label="Estado institucional"
-          value={{ ACTIVE: 'Activa', BLOCKED: 'Bloqueada', PENDING: 'Pendiente' }[organization?.status ?? 'PENDING']}
-        />
-      </div>
+      <WidgetGate id="org.stats">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatCard label="Especialistas activos" value={activeSpecialists} />
+          <StatCard label="Citas asociadas" value={organization?.appointments.length ?? 0} />
+          <StatCard
+            label="Estado institucional"
+            value={
+              { ACTIVE: 'Activa', BLOCKED: 'Bloqueada', PENDING: 'Pendiente' }[
+                organization?.status ?? 'PENDING'
+              ]
+            }
+          />
+        </div>
+      </WidgetGate>
 
       <div className="mt-5 grid items-start gap-5 xl:grid-cols-[1.4fr_0.9fr]">
         <Panel title={organization?.name ?? 'Organización pendiente'}>

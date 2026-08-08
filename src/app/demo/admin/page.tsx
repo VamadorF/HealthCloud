@@ -1,4 +1,5 @@
 import { DemoShell, MetricGrid, Panel, StatusPill } from '@/components/demo/demo-shell';
+import { WidgetGate } from '@/components/platform/widget-preferences';
 import { ADMIN_STATS, ADMIN_ORGS } from '@/lib/mock/demo-data';
 import Link from 'next/link';
 
@@ -9,7 +10,9 @@ export default function DemoAdminPage() {
       title="Resumen operativo"
       subtitle="Vista global de organizaciones, usuarios y actividad en la plataforma"
     >
-      <MetricGrid items={ADMIN_STATS} />
+      <WidgetGate id="admin.stats">
+        <MetricGrid items={ADMIN_STATS} />
+      </WidgetGate>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
