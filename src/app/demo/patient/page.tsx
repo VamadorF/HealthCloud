@@ -36,6 +36,35 @@ export default function DemoPatientPage() {
         </section>
       )}
 
+      {/* Acción primaria: registrar síntomas siempre a un toque */}
+      <section
+        className={`${nextAppointment ? 'mt-5' : ''} rounded-xl border border-brand/25 bg-brand-light/60 px-5 py-5 sm:px-6`}
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="h-[3px] w-5 shrink-0 rounded-full bg-role-patient"
+              />
+              <p className="signage-label text-brand-mid">Ahora</p>
+            </div>
+            <p className="mt-2 font-display text-2xl leading-tight text-ink">
+              Registrar síntomas
+            </p>
+            <p className="mt-1 max-w-md text-sm text-inkMuted">
+              Dolor con EVA/ENA, zonas afectadas y cómo te sientes entre consultas.
+            </p>
+          </div>
+          <Link
+            href="/demo/patient/symptoms"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-lg bg-brand px-5 text-sm font-display text-white transition-colors duration-200 ease-out-soft hover:bg-brand-dark active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-soft focus-visible:ring-offset-2"
+          >
+            Registrar ahora
+          </Link>
+        </div>
+      </section>
+
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <WidgetGate id="patient.upcomingAppointments">
           <Panel
@@ -71,7 +100,7 @@ export default function DemoPatientPage() {
         </WidgetGate>
 
         <WidgetGate id="patient.quickActions">
-          <Panel title="Acciones rápidas">
+          <Panel title="Otras acciones">
             <div className="grid gap-3">
               <Link
                 href="/demo/patient/surveys"
@@ -80,16 +109,16 @@ export default function DemoPatientPage() {
                 Encuestas clínicas →
               </Link>
               <Link
-                href="/demo/patient/symptoms"
-                className="rounded-xl bg-canvas px-4 py-3 text-sm font-medium text-ink transition hover:bg-brand-light"
-              >
-                Registrar síntomas →
-              </Link>
-              <Link
                 href="/demo/patient/appointments"
                 className="rounded-xl bg-canvas px-4 py-3 text-sm font-medium text-ink transition hover:bg-brand-light"
               >
                 Solicitar nueva hora →
+              </Link>
+              <Link
+                href="/demo/patient/history"
+                className="rounded-xl bg-canvas px-4 py-3 text-sm font-medium text-ink transition hover:bg-brand-light"
+              >
+                Historial médico →
               </Link>
             </div>
           </Panel>

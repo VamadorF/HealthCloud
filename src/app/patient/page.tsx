@@ -57,21 +57,47 @@ export default async function PatientDashboardPage() {
         </section>
       )}
 
+      <section
+        className={`${nextAppointment ? 'mt-5' : ''} rounded-xl border border-brand/25 bg-brand-light/60 px-5 py-5 sm:px-6`}
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="h-[3px] w-5 shrink-0 rounded-full bg-role-patient"
+              />
+              <p className="signage-label text-brand-mid">Ahora</p>
+            </div>
+            <p className="mt-2 font-display text-2xl leading-tight text-ink">
+              Registrar síntomas
+            </p>
+            <p className="mt-1 max-w-md text-sm text-inkMuted">
+              Dolor con EVA/ENA, zonas afectadas y cómo te sientes entre consultas.
+            </p>
+          </div>
+          <Link
+            href="/patient/symptoms"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-lg bg-brand px-5 text-sm font-display text-white transition-colors duration-200 ease-out-soft hover:bg-brand-dark active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-soft focus-visible:ring-offset-2"
+          >
+            Registrar ahora
+          </Link>
+        </div>
+      </section>
+
       <WidgetGate id="patient.quickActions">
-        <h2 className={`${nextAppointment ? 'mt-10' : ''} font-display text-lg text-ink`}>
-          ¿Qué necesitas hacer hoy?
-        </h2>
+        <h2 className="mt-10 font-display text-lg text-ink">Otras acciones</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           {[
+            {
+              href: '/patient/surveys',
+              title: 'Encuestas clínicas',
+              desc: 'Escalas que tu especialista te haya abierto',
+            },
             {
               href: '/patient/appointments',
               title: 'Solicitar hora',
               desc: 'Agenda una cita de atención médica',
-            },
-            {
-              href: '/patient/symptoms',
-              title: 'Registrar síntomas',
-              desc: 'Reporta dolor (EVA), urgencia y zonas afectadas',
             },
             {
               href: '/patient/history',

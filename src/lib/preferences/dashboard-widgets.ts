@@ -45,8 +45,8 @@ export const WIDGET_CATALOG: Record<DashboardRole, WidgetDefinition[]> = {
     },
     {
       id: 'patient.quickActions',
-      label: 'Acciones rápidas',
-      description: 'Atajos a síntomas, historial y solicitud de hora.',
+      label: 'Otras acciones',
+      description: 'Atajos a encuestas, historial y solicitud de hora.',
       defaultVisible: true,
     },
     {
