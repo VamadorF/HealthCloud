@@ -35,15 +35,11 @@ export default async function DemoSettingsPage({
       <div className="grid max-w-3xl gap-6">
         {role === 'specialist' ? (
           <Panel title="Vista de la agenda">
-            <div className="p-6">
-              <AgendaViewSettingsPanel />
-            </div>
+            <AgendaViewSettingsPanel />
           </Panel>
         ) : null}
         <Panel title="Personalización del panel">
-          <div className="p-6">
-            <WidgetSettingsPanel role={role} />
-          </div>
+          <WidgetSettingsPanel role={role} />
         </Panel>
       </div>
     </DemoShell>
