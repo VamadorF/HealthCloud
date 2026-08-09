@@ -109,13 +109,13 @@ export const SPECIALIST_AGENDA = [
   { time: '11:15', patient: 'Felipe Arancibia', reason: 'Dolor abdominal', room: 'Box 3', status: 'Solicitada' },
 ];
 
-/** Citas extra de la semana demo para poblar la vista calendario. */
+/** Citas extra de la semana demo (weekday: 0 = lunes … 4 = viernes). */
 export const SPECIALIST_WEEK_EXTRAS = [
-  { dayOffset: 1, time: '09:30', patient: 'Ana Contreras', reason: 'Control post-operatorio', room: 'Box 3', status: 'Confirmada' },
-  { dayOffset: 1, time: '11:00', patient: 'Luis Herrera', reason: 'Revisión de exámenes', room: 'Box 3', status: 'Confirmada' },
-  { dayOffset: 2, time: '10:00', patient: 'Patricia Núñez', reason: 'Primera consulta', room: 'Box 5', status: 'Solicitada' },
-  { dayOffset: 3, time: '15:00', patient: 'Diego Salinas', reason: 'Control crónico', room: 'Box 3', status: 'Confirmada' },
-  { dayOffset: -1, time: '16:30', patient: 'Elena Vargas', reason: 'Seguimiento dolor', room: 'Box 3', status: 'Confirmada' },
+  { weekday: 0, time: '09:30', patient: 'Ana Contreras', reason: 'Control post-operatorio', room: 'Box 3', status: 'Confirmada' },
+  { weekday: 0, time: '11:00', patient: 'Luis Herrera', reason: 'Revisión de exámenes', room: 'Box 3', status: 'Confirmada' },
+  { weekday: 1, time: '10:00', patient: 'Patricia Núñez', reason: 'Primera consulta', room: 'Box 5', status: 'Solicitada' },
+  { weekday: 2, time: '15:00', patient: 'Diego Salinas', reason: 'Control crónico', room: 'Box 3', status: 'Confirmada' },
+  { weekday: 3, time: '16:30', patient: 'Elena Vargas', reason: 'Seguimiento dolor', room: 'Box 3', status: 'Confirmada' },
 ] as const;
 
 export const PATIENT_APPOINTMENTS = [
