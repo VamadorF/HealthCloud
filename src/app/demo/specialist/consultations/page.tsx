@@ -77,7 +77,7 @@ export default function DemoSpecialistConsultationsPage() {
 
         <Panel title="Programación de encuestas">
           <p className="text-sm leading-6 text-inkMuted">
-            Las escalas PSS-14, PSQI y PCS se responden en la cuenta del paciente. Desde{' '}
+            Las escalas PSS-14, PSQI, PCS y Dolor se responden en la cuenta del paciente. Desde{' '}
             <a href="/demo/specialist/patients" className="font-bold text-brand-mid hover:underline">
               Pacientes
             </a>{' '}

@@ -42,6 +42,8 @@ interface EvaScaleProps {
   name?: string;
   label?: string;
   defaultValue?: number;
+  value?: number;
+  onChange?: (next: number) => void;
   required?: boolean;
 }
 
@@ -49,10 +51,17 @@ export function EvaScale({
   name = 'painScore',
   label = 'Intensidad del dolor (EVA)',
   defaultValue = 0,
+  value,
+  onChange,
   required = false,
 }: EvaScaleProps) {
   const id = useId();
-  const [score, setScore] = useState(defaultValue);
+  const [internal, setInternal] = useState(defaultValue);
+  const score = value ?? internal;
+  const setScore = (next: number) => {
+    if (value === undefined) setInternal(next);
+    onChange?.(next);
+  };
   const severity = evaSeverity(score);
 
   return (
@@ -70,7 +79,7 @@ export function EvaScale({
               {score}
               <span className="ml-1 text-base font-normal text-inkMuted">/ 10</span>
             </p>
-            <p className="mt-2 text-sm text-inkMuted">Escala Visual Analógica</p>
+            <p className="mt-2 text-sm text-inkMuted">EVA / ENA · Escala 0–10</p>
           </div>
           <span
             className={`inline-flex rounded-md px-2 py-1 text-xs font-bold ${SEVERITY_TONE[severity]}`}

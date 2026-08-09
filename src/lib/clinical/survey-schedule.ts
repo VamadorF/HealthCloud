@@ -1,12 +1,17 @@
 /**
- * Programación clínica de encuestas (PSS-14, PSQI, PCS).
+ * Programación clínica de encuestas (PSS-14, PSQI, PCS, Dolor).
  *
  * Por defecto están DESACTIVADAS. El especialista decide cuáles activar
  * y cuándo. Cadencia de seguimiento: cada 2 meses tras una respuesta,
  * salvo que el especialista vuelva a abrir la ventana.
  */
 
-export type SurveyInstrumentId = 'PSS-14' | 'PSQI' | 'PCS';
+import {
+  BODY_REGION_LABELS,
+  PAIN_CHARACTERISTICS,
+} from '@/lib/clinical/pain-assessment';
+
+export type SurveyInstrumentId = 'PSS-14' | 'PSQI' | 'PCS' | 'DOLOR';
 
 export const SURVEY_CADENCE_DAYS = 60; // ~2 meses
 
@@ -34,6 +39,13 @@ export const SURVEY_INSTRUMENTS: Record<
     description: 'Pensamientos catastróficos ante el dolor.',
     recall: 'Cuando siente dolor',
     slug: 'pcs',
+  },
+  DOLOR: {
+    label: 'Evaluación del dolor',
+    shortLabel: 'Dolor',
+    description: 'Aparición, localización, EVA/ENA, características, irradiación y alivio.',
+    recall: 'Estado actual del dolor',
+    slug: 'dolor',
   },
 };
 
@@ -74,6 +86,7 @@ export function defaultSurveyConfig(): SurveyConfig {
     'PSS-14': { ...DEFAULT_ASSIGNMENT, history: [] },
     PSQI: { ...DEFAULT_ASSIGNMENT, history: [] },
     PCS: { ...DEFAULT_ASSIGNMENT, history: [] },
+    DOLOR: { ...DEFAULT_ASSIGNMENT, history: [] },
   };
 }
 
@@ -95,6 +108,11 @@ export function mergeSurveyConfig(stored?: SurveyConfig | null): SurveyConfig {
       ...DEFAULT_ASSIGNMENT,
       ...stored.PCS,
       history: stored.PCS?.history ?? [],
+    },
+    DOLOR: {
+      ...DEFAULT_ASSIGNMENT,
+      ...stored.DOLOR,
+      history: stored.DOLOR?.history ?? [],
     },
   };
 }
@@ -185,6 +203,28 @@ export function appendSurveyRecord(
   };
 }
 
+function formatPainScoreSummary(score: Record<string, unknown>): string {
+  if (typeof score.intensityEva !== 'number') return 'Dolor';
+  const eva = `EVA ${score.intensityEva}/10`;
+  const band = typeof score.bandLabel === 'string' ? ` · ${score.bandLabel}` : '';
+  const locs = Array.isArray(score.locations)
+    ? score.locations
+        .map((id) => BODY_REGION_LABELS[String(id)] ?? String(id))
+        .slice(0, 2)
+        .join(', ')
+    : '';
+  const chars = Array.isArray(score.characteristics)
+    ? score.characteristics
+        .map(
+          (id) =>
+            PAIN_CHARACTERISTICS.find((c) => c.id === id)?.label ?? String(id)
+        )
+        .slice(0, 2)
+        .join(', ')
+    : '';
+  return `${eva}${band}${locs ? ` · ${locs}` : ''}${chars ? ` · ${chars}` : ''}`;
+}
+
 export function formatScoreSummary(
   instrument: SurveyInstrumentId,
   score: Record<string, unknown>
@@ -197,6 +237,9 @@ export function formatScoreSummary(
   }
   if (instrument === 'PCS' && typeof score.total === 'number') {
     return `PCS ${score.total}/52${score.bandLabel ? ` · ${score.bandLabel}` : ''}`;
+  }
+  if (instrument === 'DOLOR') {
+    return formatPainScoreSummary(score);
   }
   return SURVEY_INSTRUMENTS[instrument].shortLabel;
 }

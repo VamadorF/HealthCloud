@@ -18,25 +18,34 @@ const BODY_AREAS = [
 
 interface BodyAreasFieldProps {
   name?: string;
+  label?: string;
   defaultValue?: string[];
+  value?: string[];
+  onChange?: (next: string[]) => void;
 }
 
 export function BodyAreasField({
   name = 'bodyAreas',
+  label = 'Zonas afectadas',
   defaultValue = [],
+  value,
+  onChange,
 }: BodyAreasFieldProps) {
-  const [selected, setSelected] = useState<string[]>(defaultValue);
+  const [internal, setInternal] = useState<string[]>(defaultValue);
+  const selected = value ?? internal;
 
   const toggle = (id: string) => {
-    setSelected((current) =>
-      current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
-    );
+    const next = selected.includes(id)
+      ? selected.filter((item) => item !== id)
+      : [...selected, id];
+    if (value === undefined) setInternal(next);
+    onChange?.(next);
   };
 
   return (
     <fieldset>
       <legend>
-        <FieldLabel>Zonas afectadas</FieldLabel>
+        <FieldLabel>{label}</FieldLabel>
       </legend>
       <input type="hidden" name={name} value={JSON.stringify(selected)} />
       <div className="flex flex-wrap gap-2">

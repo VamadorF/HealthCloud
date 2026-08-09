@@ -140,7 +140,7 @@ export default async function SpecialistConsultationsPage() {
                     defaultValue='{"medicamentos":[],"indicaciones":""}'
                   />
                   <p className="text-sm text-inkMuted">
-                    Las encuestas PSS-14, PSQI y PCS se gestionan en Pacientes (activar /
+                    Las encuestas PSS-14, PSQI, PCS y Dolor se gestionan en Pacientes (activar /
                     desactivar / forzar) y las responde el paciente.
                   </p>
                   <div>

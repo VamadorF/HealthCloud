@@ -9,6 +9,11 @@ import { buildPssPayload } from '@/lib/clinical/pss';
 import { computePsqiScore, type PsqiAnswers } from '@/lib/clinical/psqi';
 import { computePcsScore } from '@/lib/clinical/pcs';
 import {
+  isPainAssessmentComplete,
+  painAssessmentScorePayload,
+  type PainAssessmentAnswers,
+} from '@/lib/clinical/pain-assessment';
+import {
   SurveyConfig,
   appendSurveyRecord,
   formatScoreSummary,
@@ -111,6 +116,31 @@ export async function submitPatientPcs(formData: FormData) {
     await saveConfig(user.id, {
       ...config,
       PCS: appendSurveyRecord(config.PCS!, score, formatScoreSummary('PCS', score)),
+    });
+  } catch {
+    return;
+  }
+
+  revalidatePath('/patient/surveys');
+  revalidatePath('/specialist/patients');
+  redirect('/patient/surveys');
+}
+
+export async function submitPatientPain(formData: FormData) {
+  const user = await requireRole('PATIENT');
+  const config = await loadWritableConfig(user.id);
+  const availability = getSurveyAvailability(config.DOLOR);
+  if (availability.status !== 'available') return;
+
+  try {
+    const answers = JSON.parse(
+      String(formData.get('painAnswers') ?? '{}')
+    ) as PainAssessmentAnswers;
+    if (!isPainAssessmentComplete(answers)) return;
+    const score = painAssessmentScorePayload(answers);
+    await saveConfig(user.id, {
+      ...config,
+      DOLOR: appendSurveyRecord(config.DOLOR!, score, formatScoreSummary('DOLOR', score)),
     });
   } catch {
     return;

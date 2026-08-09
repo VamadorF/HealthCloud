@@ -16,7 +16,7 @@ export async function updatePatientSurveyInstrument(formData: FormData) {
   const instrument = String(formData.get('instrument') ?? '') as SurveyInstrumentId;
   const action = String(formData.get('action') ?? '');
 
-  if (!patientId || !['PSS-14', 'PSQI', 'PCS'].includes(instrument)) return;
+  if (!patientId || !['PSS-14', 'PSQI', 'PCS', 'DOLOR'].includes(instrument)) return;
 
   const linked = await prisma.appointment.findFirst({
     where: { specialistId: user.id, patientId },

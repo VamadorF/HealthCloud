@@ -40,12 +40,62 @@ const PATIENTS = [
   },
 ];
 
+const ROBERTO_DOLOR_SEED = {
+  enabled: true,
+  forceActive: false,
+  lastCompletedAt: '2026-07-20T12:00:00.000Z',
+  lastScore: {
+    kind: 'pain-assessment',
+    onset: 'Hace 3 semanas, tras un esfuerzo en el jardín',
+    onsetDate: '2026-06-28',
+    locations: ['espalda', 'pierna_izq'],
+    intensityEva: 6,
+    characteristics: ['punzante', 'arde'],
+    radiation: 'down',
+    radiationDetail: 'Baja hacia la pierna izquierda',
+    relieves: 'Reposo y calor local',
+    aggravates: 'Estar de pie mucho rato',
+    bandLabel: 'Dolor moderado',
+  },
+  history: [
+    {
+      completedAt: '2026-07-20T12:00:00.000Z',
+      score: {
+        kind: 'pain-assessment',
+        onset: 'Hace 3 semanas, tras un esfuerzo en el jardín',
+        onsetDate: '2026-06-28',
+        locations: ['espalda', 'pierna_izq'],
+        intensityEva: 6,
+        characteristics: ['punzante', 'arde'],
+        radiation: 'down',
+        radiationDetail: 'Baja hacia la pierna izquierda',
+        relieves: 'Reposo y calor local',
+        aggravates: 'Estar de pie mucho rato',
+        bandLabel: 'Dolor moderado',
+      },
+      summary: 'EVA 6/10 · Dolor moderado · Espalda, Pierna izq. · Punzante, Arde',
+    },
+  ],
+} as const;
+
 /** Datos de demostración para que el especialista vea registros en la ficha. */
 function seedRobertoIfNeeded() {
   try {
     const raw = window.localStorage.getItem(SURVEY_STORAGE_KEY);
     const store = raw ? (JSON.parse(raw) as Record<string, SurveyConfig>) : {};
-    if (store['roberto-diaz']?.['PSS-14']?.history?.length) return;
+    const existing = mergeSurveyConfig(store['roberto-diaz']);
+
+    // Si ya hay seed previo, solo añade DOLOR si falta.
+    if (existing['PSS-14']?.history?.length) {
+      if (!existing.DOLOR?.history?.length) {
+        store['roberto-diaz'] = mergeSurveyConfig({
+          ...existing,
+          DOLOR: { ...ROBERTO_DOLOR_SEED, history: [...ROBERTO_DOLOR_SEED.history] },
+        });
+        window.localStorage.setItem(SURVEY_STORAGE_KEY, JSON.stringify(store));
+      }
+      return;
+    }
 
     store['roberto-diaz'] = mergeSurveyConfig({
       'PSS-14': {
@@ -121,6 +171,7 @@ function seedRobertoIfNeeded() {
           },
         ],
       },
+      DOLOR: { ...ROBERTO_DOLOR_SEED, history: [...ROBERTO_DOLOR_SEED.history] },
     });
     window.localStorage.setItem(SURVEY_STORAGE_KEY, JSON.stringify(store));
   } catch {
