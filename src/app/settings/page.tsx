@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { requireAuth } from '@/lib/auth/session';
 import { PlatformShell, Panel } from '@/components/platform/platform-shell';
+import { AgendaViewSettingsPanel } from '@/components/clinical/agenda-view-preference';
 import { WidgetSettingsPanel } from '@/components/platform/widget-preferences';
 import { getTourRole } from '@/lib/tour/steps';
 
@@ -17,6 +18,14 @@ export default async function SettingsPage() {
       description="Personaliza qué ves en tu panel y cómo se presenta la información clínica"
     >
       <div className="grid max-w-3xl gap-6">
+        {role === 'specialist' ? (
+          <Panel title="Vista de la agenda">
+            <div className="px-6 py-5">
+              <AgendaViewSettingsPanel />
+            </div>
+          </Panel>
+        ) : null}
+
         <Panel title="Personalización del panel">
           <div className="px-6 py-5">
             <WidgetSettingsPanel role={role} />

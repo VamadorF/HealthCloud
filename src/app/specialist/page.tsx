@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
 import { PlatformShell, StatusBadge, Panel, StatCard } from '@/components/platform/platform-shell';
 import { WidgetGate } from '@/components/platform/widget-preferences';
+import { SpecialistScheduleView } from '@/components/clinical/specialist-schedule-view';
+import { toScheduleEventFromAppointment } from '@/lib/clinical/schedule-events';
 import { formatDateTime, formatTime } from '@/utils/format';
 import { confirmAppointment } from '@/app/specialist/actions';
 import { SubmitButton } from '@/components/ui/submit-button';
@@ -17,7 +19,7 @@ export default async function SpecialistDashboardPage() {
     where: { specialistId: user.id },
     include: { patient: true },
     orderBy: { scheduledAt: 'asc' },
-    take: 20,
+    take: 40,
   });
 
   const now = new Date();
@@ -26,6 +28,16 @@ export default async function SpecialistDashboardPage() {
   const pending = appointments.filter((a) => a.status === 'REQUESTED');
   const showingToday = todayAppointments.length > 0;
 
+  const events = appointments.map((appt) =>
+    toScheduleEventFromAppointment({
+      id: appt.id,
+      scheduledAt: appt.scheduledAt,
+      reason: appt.reason,
+      status: appt.status,
+      patientName: appt.patient.fullName ?? appt.patient.email,
+    })
+  );
+
   return (
     <PlatformShell
       user={user}
@@ -33,62 +45,64 @@ export default async function SpecialistDashboardPage() {
       description="Cronograma de atenciones y confirmaciones pendientes"
     >
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(260px,0.85fr)]">
-        <Panel
+        <SpecialistScheduleView
           title={showingToday ? 'Cronograma de hoy' : 'Próximas atenciones'}
-          action={
+          summary={
             <span className="text-xs tabular-nums text-inkMuted">
               {schedule.length} {schedule.length === 1 ? 'cita' : 'citas'}
             </span>
           }
-        >
-          {schedule.length === 0 ? (
-            <p className="px-6 py-10 text-center text-sm text-inkMuted">
-              No tienes citas programadas.
-            </p>
-          ) : (
-            <ol className="divide-y divide-line">
-              {schedule.map((appt) => {
-                const when = new Date(appt.scheduledAt);
-                return (
-                  <li
-                    key={appt.id}
-                    className="flex flex-col gap-3 px-5 py-4 transition-colors duration-200 ease-out-soft hover:bg-canvas/60 sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div className="flex min-w-0 gap-4">
-                      <div className="w-16 shrink-0">
-                        <p className="font-display text-sm font-semibold text-brand-mid tabular-nums">
-                          {formatTime(when)}
-                        </p>
-                        {!showingToday && (
-                          <p className="mt-0.5 text-xs text-inkMuted">
-                            {formatDateTime(when).split(',')[0]}
+          events={events}
+          agenda={
+            schedule.length === 0 ? (
+              <p className="px-6 py-10 text-center text-sm text-inkMuted">
+                No tienes citas programadas.
+              </p>
+            ) : (
+              <ol className="divide-y divide-line">
+                {schedule.map((appt) => {
+                  const when = new Date(appt.scheduledAt);
+                  return (
+                    <li
+                      key={appt.id}
+                      className="flex flex-col gap-3 px-5 py-4 transition-colors duration-200 ease-out-soft hover:bg-canvas/60 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div className="flex min-w-0 gap-4">
+                        <div className="w-16 shrink-0">
+                          <p className="font-display text-sm font-semibold text-brand-mid tabular-nums">
+                            {formatTime(when)}
                           </p>
-                        )}
+                          {!showingToday && (
+                            <p className="mt-0.5 text-xs text-inkMuted">
+                              {formatDateTime(when).split(',')[0]}
+                            </p>
+                          )}
+                        </div>
+                        <div className="min-w-0 border-l-2 border-brand-soft pl-4">
+                          <p className="font-bold text-ink">
+                            {appt.patient.fullName ?? appt.patient.email}
+                          </p>
+                          <p className="mt-0.5 text-sm text-inkMuted">
+                            {appt.reason ?? 'Sin motivo registrado'}
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0 border-l-2 border-brand-soft pl-4">
-                        <p className="font-bold text-ink">
-                          {appt.patient.fullName ?? appt.patient.email}
-                        </p>
-                        <p className="mt-0.5 text-sm text-inkMuted">
-                          {appt.reason ?? 'Sin motivo registrado'}
-                        </p>
+                      <div className="flex shrink-0 items-center gap-3 self-start sm:self-center">
+                        <StatusBadge status={appt.status} />
+                        {appt.status === 'REQUESTED' ? (
+                          <form action={confirmAppointment}>
+                            <input type="hidden" name="appointmentId" value={appt.id} />
+                            <SubmitButton size="sm">Confirmar</SubmitButton>
+                          </form>
+                        ) : null}
                       </div>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-3 self-start sm:self-center">
-                      <StatusBadge status={appt.status} />
-                      {appt.status === 'REQUESTED' ? (
-                        <form action={confirmAppointment}>
-                          <input type="hidden" name="appointmentId" value={appt.id} />
-                          <SubmitButton size="sm">Confirmar</SubmitButton>
-                        </form>
-                      ) : null}
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          )}
-        </Panel>
+                    </li>
+                  );
+                })}
+              </ol>
+            )
+          }
+        />
 
         <aside className="space-y-6">
           <section className="rounded-xl border border-line bg-surface px-5 py-4 shadow-card">

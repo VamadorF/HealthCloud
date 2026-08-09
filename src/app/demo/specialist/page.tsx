@@ -1,42 +1,51 @@
+'use client';
+
+import { useMemo } from 'react';
+import Link from 'next/link';
 import { DemoShell, Panel, TimelineItem, MetricGrid } from '@/components/demo/demo-shell';
 import { WidgetGate } from '@/components/platform/widget-preferences';
+import { SpecialistScheduleView } from '@/components/clinical/specialist-schedule-view';
 import { SPECIALIST_AGENDA } from '@/lib/mock/demo-data';
-import Link from 'next/link';
+import { buildDemoSpecialistScheduleEvents } from '@/lib/mock/specialist-schedule';
 
 const CURRENT = SPECIALIST_AGENDA.find((item) => item.status === 'En sala') ?? SPECIALIST_AGENDA[0];
 const WAITING = SPECIALIST_AGENDA.filter((item) => item.status === 'En sala').length;
 const TO_CONFIRM = SPECIALIST_AGENDA.filter((item) => item.status === 'Solicitada').length;
 
 export default function DemoSpecialistPage() {
+  const events = useMemo(() => buildDemoSpecialistScheduleEvents(), []);
+
   return (
     <DemoShell
       role="specialist"
       title="Agenda de hoy"
       subtitle="Miércoles 9 de abril · Medicina interna · Box 3"
     >
-      {/* Focal: cronograma clínico */}
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.85fr)]">
-        <Panel
+        <SpecialistScheduleView
           title="Cronograma"
-          action={
+          summary={
             <span className="text-xs tabular-nums text-inkMuted">
-              {SPECIALIST_AGENDA.length} atenciones · 09:00–11:15
+              {SPECIALIST_AGENDA.length} atenciones hoy · 09:00–11:15
             </span>
           }
-        >
-          <div className="space-y-0">
-            {SPECIALIST_AGENDA.map((item) => (
-              <TimelineItem
-                key={item.time}
-                time={item.time}
-                title={item.patient}
-                meta={`${item.reason} · ${item.room}`}
-                status={item.status}
-                accent={item.status === 'En sala'}
-              />
-            ))}
-          </div>
-        </Panel>
+          events={events}
+          flushAgenda={false}
+          agenda={
+            <div className="space-y-0">
+              {SPECIALIST_AGENDA.map((item) => (
+                <TimelineItem
+                  key={item.time}
+                  time={item.time}
+                  title={item.patient}
+                  meta={`${item.reason} · ${item.room}`}
+                  status={item.status}
+                  accent={item.status === 'En sala'}
+                />
+              ))}
+            </div>
+          }
+        />
 
         <WidgetGate id="specialist.nextStep">
           <Panel
