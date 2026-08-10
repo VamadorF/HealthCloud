@@ -1,4 +1,5 @@
 import { DemoShell, MetricGrid, Panel } from '@/components/demo/demo-shell';
+import { WidgetGate } from '@/components/platform/widget-preferences';
 import { ORG_SPECIALISTS } from '@/lib/mock/demo-data';
 import Link from 'next/link';
 
@@ -9,14 +10,16 @@ export default function DemoOrgPage() {
       title="Clínica Andes Norte"
       subtitle="Providencia, Santiago · Centro médico de atención ambulatoria"
     >
-      <MetricGrid
-        items={[
-          { label: 'Especialistas activos', value: '18', delta: '3 invitaciones pendientes' },
-          { label: 'Citas esta semana', value: '64', delta: '+8% vs anterior' },
-          { label: 'Pacientes atendidos', value: '1.240', delta: 'Últimos 12 meses' },
-          { label: 'Ocupación agenda', value: '78%', delta: 'Promedio semanal' },
-        ]}
-      />
+      <WidgetGate id="org.stats">
+        <MetricGrid
+          items={[
+            { label: 'Especialistas activos', value: '18', delta: '3 invitaciones pendientes' },
+            { label: 'Citas esta semana', value: '64', delta: '+8% vs anterior' },
+            { label: 'Pacientes atendidos', value: '1.240', delta: 'Últimos 12 meses' },
+            { label: 'Ocupación agenda', value: '78%', delta: 'Promedio semanal' },
+          ]}
+        />
+      </WidgetGate>
 
       <div className="mt-8">
         <Panel

@@ -1,7 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/session';
-import { PlatformShell, Panel, DataTable } from '@/components/platform/platform-shell';
-import { formatDateTime } from '@/utils/format';
+import { PlatformShell } from '@/components/platform/platform-shell';
+import {
+  AuthSpecialistPatientsWorkspace,
+  type AuthPatientRow,
+} from '@/components/clinical/auth-specialist-patients-workspace';
+import { mergeSurveyConfig, type SurveyConfig } from '@/lib/clinical/survey-schedule';
 
 export default async function SpecialistPatientsPage() {
   const user = await requireRole('SPECIALIST');
@@ -13,27 +17,33 @@ export default async function SpecialistPatientsPage() {
     orderBy: { scheduledAt: 'asc' },
   });
 
+  const patients: AuthPatientRow[] = appointments.map((appt) => {
+    const allergies = appt.patient.patientProfile?.allergies;
+    const allergyLabel = Array.isArray(allergies)
+      ? allergies.length > 0
+        ? allergies.map(String).join(', ')
+        : 'Sin registrar'
+      : 'Sin registrar';
+
+    return {
+      id: appt.patient.id,
+      name: appt.patient.fullName ?? appt.patient.email,
+      email: appt.patient.email,
+      bloodType: appt.patient.patientProfile?.bloodType ?? 'Sin registrar',
+      allergies: allergyLabel,
+      surveyConfig: mergeSurveyConfig(
+        (appt.patient.patientProfile?.surveyConfig as SurveyConfig | null) ?? null
+      ),
+    };
+  });
+
   return (
     <PlatformShell
       user={user}
       title="Pacientes"
-      description="Información clínica de los pacientes en tu agenda"
+      description={`${patients.length} fichas · busca y abre la ficha para gestionar encuestas`}
     >
-      <Panel title="Pacientes asignados">
-        <DataTable
-          headers={['Paciente', 'Contacto', 'Tipo de sangre', 'Próxima cita']}
-          empty="Aún no tienes pacientes asignados."
-          rows={appointments.map((appt) => ({
-            key: appt.patient.id,
-            cells: [
-              appt.patient.fullName ?? appt.patient.email,
-              appt.patient.email,
-              appt.patient.patientProfile?.bloodType ?? 'Sin registrar',
-              formatDateTime(appt.scheduledAt),
-            ],
-          }))}
-        />
-      </Panel>
+      <AuthSpecialistPatientsWorkspace patients={patients} />
     </PlatformShell>
   );
 }

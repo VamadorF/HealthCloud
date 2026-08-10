@@ -137,6 +137,8 @@ model PatientProfile {
   bloodType        String?  @map("blood_type")
   allergies        Json?
   emergencyContact Json?    @map("emergency_contact")
+  /// Programación de encuestas clínicas (PSS-14, PSQI): enabled, forceActive, lastCompletedAt.
+  surveyConfig     Json?    @map("survey_config")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
@@ -208,6 +210,8 @@ model SymptomReport {
   patientId       String       @map("patient_id")
   urgencyLevel    UrgencyLevel @map("urgency_level")
   description     String
+  /// Intensidad del dolor según Escala Visual Analógica (EVA), 0–10.
+  painScore       Int?         @map("pain_score")
   visualSymptoms  Json?        @map("visual_symptoms")
   bodyAreas       Json?        @map("body_areas")
   duration        String?

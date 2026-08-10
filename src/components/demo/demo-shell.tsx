@@ -4,6 +4,7 @@ import { SidebarNav, LocationCrumb } from '@/components/platform/sidebar-nav';
 import { ROLE_THEMES } from '@/components/platform/role-theme';
 import { AccessibilityControls } from '@/components/platform/accessibility';
 import { GuidedTour } from '@/components/platform/guided-tour';
+import { WidgetPreferencesProvider } from '@/components/platform/widget-preferences';
 
 interface DemoShellProps {
   role: DemoRole;
@@ -30,59 +31,67 @@ export function DemoShell({ role, title, subtitle, children }: DemoShellProps) {
   const theme = ROLE_THEMES[role];
 
   return (
-    <div className="relative min-h-screen bg-canvas lg:flex">
-      {/* Línea de guía del rol */}
-      <span aria-hidden="true" className={`absolute inset-y-0 left-0 z-20 w-1 ${theme.line}`} />
+    <WidgetPreferencesProvider role={role}>
+      <div className="relative min-h-screen bg-canvas lg:flex">
+        {/* Línea de guía del rol */}
+        <span aria-hidden="true" className={`absolute inset-y-0 left-0 z-20 w-1 ${theme.line}`} />
 
-      <aside
-        data-tour="nav"
-        className="flex flex-col gap-5 border-b border-line px-5 pb-4 pt-5 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:overflow-x-hidden lg:border-b-0 lg:border-r lg:px-6 lg:pb-6 lg:pt-7"
-      >
-        <div>
-          <Link href="/" className="font-display text-lg text-ink">
-            HealthCloud
-          </Link>
-          <p className={`signage-label mt-1.5 ${theme.text}`}>{ROLE_CONTEXT[role]}</p>
-        </div>
-
-        <SidebarNav items={nav} tone={role} />
-
-        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4 lg:mt-auto lg:flex-col lg:items-stretch lg:gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-ink">{user.name}</p>
-            <p className="truncate text-xs text-inkMuted">
-              {user.context} · Vista de demostración
-            </p>
-          </div>
-          <RoleSwitcher current={role} />
-        </div>
-      </aside>
-
-      <div className="min-w-0 flex-1">
-        <header
-          data-tour="header"
-          className="flex items-center justify-between gap-4 border-b border-line px-5 py-3.5 sm:px-8"
+        <aside
+          data-tour="nav"
+          className="flex flex-col gap-5 border-b border-line px-5 pb-4 pt-5 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:overflow-x-hidden lg:border-b-0 lg:border-r lg:px-6 lg:pb-6 lg:pt-7"
         >
-          <LocationCrumb roleLabel={user.roleLabel} items={nav} tone={role} />
-          <div className="flex shrink-0 items-center gap-2">
-            <GuidedTour role={role} roleLabel={user.roleLabel} />
-            <AccessibilityControls />
+          <div>
+            <Link href="/" className="font-display text-lg text-ink">
+              HealthCloud
+            </Link>
+            <p className={`signage-label mt-1.5 ${theme.text}`}>{ROLE_CONTEXT[role]}</p>
           </div>
-        </header>
 
-        <main className="mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 lg:py-10">
-          <div className="max-w-3xl">
-            <h1 className="font-display text-[1.75rem] leading-tight text-ink sm:text-[2rem]">
-              {title}
-            </h1>
-            {subtitle && <p className="mt-2 text-base leading-6 text-inkMuted">{subtitle}</p>}
+          <SidebarNav items={nav} tone={role} />
+
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4 lg:mt-auto lg:flex-col lg:items-stretch lg:gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold text-ink">{user.name}</p>
+              <p className="truncate text-xs text-inkMuted">
+                {user.context} · Vista de demostración
+              </p>
+              <Link
+                href={`/demo/${role}/settings`}
+                className="mt-2 inline-block text-sm font-bold text-brand-mid transition-colors duration-200 ease-out-soft hover:text-ink"
+              >
+                Ajustes
+              </Link>
+            </div>
+            <RoleSwitcher current={role} />
           </div>
-          <div data-tour="content" className="mt-8">
-            {children}
-          </div>
-        </main>
+        </aside>
+
+        <div className="min-w-0 flex-1">
+          <header
+            data-tour="header"
+            className="flex items-center justify-between gap-4 border-b border-line px-5 py-3.5 sm:px-8"
+          >
+            <LocationCrumb roleLabel={user.roleLabel} items={nav} tone={role} />
+            <div className="flex shrink-0 items-center gap-2">
+              <GuidedTour role={role} roleLabel={user.roleLabel} />
+              <AccessibilityControls />
+            </div>
+          </header>
+
+          <main className="mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 lg:py-10">
+            <div className="max-w-3xl">
+              <h1 className="font-display text-[1.75rem] leading-tight text-ink sm:text-[2rem]">
+                {title}
+              </h1>
+              {subtitle && <p className="mt-2 text-base leading-6 text-inkMuted">{subtitle}</p>}
+            </div>
+            <div data-tour="content" className="mt-8">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </WidgetPreferencesProvider>
   );
 }
 
@@ -237,20 +246,40 @@ export function TimelineItem({
   title,
   meta,
   status,
+  accent = false,
 }: {
   time: string;
   title: string;
   meta: string;
   status?: string;
+  /** Destaca la atención en curso dentro del cronograma. */
+  accent?: boolean;
 }) {
   return (
-    <div className="flex gap-4 border-l-2 border-brand-soft pl-5 pb-6 last:pb-0">
-      <div className="flex-1">
-        <p className="font-display text-xs font-semibold text-brand-mid tabular-nums">{time}</p>
-        <p className="mt-1 font-bold text-ink">{title}</p>
-        <p className="mt-0.5 text-sm text-inkMuted">{meta}</p>
+    <div
+      className={`flex flex-col gap-2 border-l-2 pl-4 pb-5 last:pb-0 sm:flex-row sm:items-start sm:gap-4 sm:pl-5 sm:pb-6 ${
+        accent
+          ? 'border-brand bg-brand-light/30 -ml-px rounded-r-lg py-3 pr-3'
+          : 'border-brand-soft'
+      }`}
+    >
+      <div className="flex items-center justify-between gap-3 sm:block sm:w-14 sm:shrink-0">
+        <p className="font-display text-sm font-semibold text-brand-mid tabular-nums">{time}</p>
+        {status && (
+          <span className="sm:hidden">
+            <StatusPill status={status} />
+          </span>
+        )}
       </div>
-      {status && <StatusPill status={status} />}
+      <div className="min-w-0 flex-1">
+        <p className="font-bold text-ink">{title}</p>
+        <p className="mt-0.5 text-sm leading-5 text-inkMuted">{meta}</p>
+      </div>
+      {status && (
+        <span className="hidden sm:inline-flex">
+          <StatusPill status={status} />
+        </span>
+      )}
     </div>
   );
 }

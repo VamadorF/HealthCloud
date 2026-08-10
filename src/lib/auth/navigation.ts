@@ -12,22 +12,27 @@ export const ROLE_NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { href: '/admin/organizations', label: 'Organizaciones' },
     { href: '/admin/reports', label: 'Reportes' },
     { href: '/admin/invitations', label: 'Invitaciones' },
+    { href: '/settings', label: 'Ajustes' },
   ],
   ORGANIZATION: [
     { href: '/organization', label: 'Panel' },
     { href: '/organization/profile', label: 'Perfil corporativo' },
     { href: '/organization/specialists', label: 'Especialistas' },
+    { href: '/settings', label: 'Ajustes' },
   ],
   SPECIALIST: [
     { href: '/specialist', label: 'Agenda' },
     { href: '/specialist/consultations', label: 'Consultas' },
     { href: '/specialist/patients', label: 'Pacientes' },
+    { href: '/settings', label: 'Ajustes' },
   ],
   PATIENT: [
     { href: '/patient', label: 'Inicio' },
     { href: '/patient/appointments', label: 'Solicitar hora' },
     { href: '/patient/symptoms', label: 'Registrar síntomas' },
+    { href: '/patient/surveys', label: 'Encuestas' },
     { href: '/patient/history', label: 'Historial médico' },
+    { href: '/settings', label: 'Ajustes' },
   ],
 };
 

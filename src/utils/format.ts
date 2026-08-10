@@ -18,6 +18,14 @@ export function formatDateTime(date: string | Date): string {
   }).format(d);
 }
 
+export function formatTime(date: string | Date): string {
+  const d = new Date(date);
+  return new Intl.DateTimeFormat('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(d);
+}
+
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 Bytes';
 

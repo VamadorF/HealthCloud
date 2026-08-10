@@ -50,22 +50,27 @@ export const DEMO_NAV: Record<DemoRole, { href: string; label: string }[]> = {
     { href: '/demo/admin/organizations', label: 'Organizaciones' },
     { href: '/demo/admin/reports', label: 'Reportes' },
     { href: '/demo/admin/invitations', label: 'Invitaciones' },
+    { href: '/demo/admin/settings', label: 'Ajustes' },
   ],
   organization: [
     { href: '/demo/organization', label: 'Resumen' },
     { href: '/demo/organization/profile', label: 'Perfil corporativo' },
     { href: '/demo/organization/specialists', label: 'Especialistas' },
+    { href: '/demo/organization/settings', label: 'Ajustes' },
   ],
   specialist: [
     { href: '/demo/specialist', label: 'Agenda' },
     { href: '/demo/specialist/consultations', label: 'Consultas' },
     { href: '/demo/specialist/patients', label: 'Pacientes' },
+    { href: '/demo/specialist/settings', label: 'Ajustes' },
   ],
   patient: [
     { href: '/demo/patient', label: 'Inicio' },
     { href: '/demo/patient/appointments', label: 'Mis citas' },
     { href: '/demo/patient/symptoms', label: 'Síntomas' },
+    { href: '/demo/patient/surveys', label: 'Encuestas' },
     { href: '/demo/patient/history', label: 'Historial' },
+    { href: '/demo/patient/settings', label: 'Ajustes' },
   ],
 };
 
@@ -104,6 +109,15 @@ export const SPECIALIST_AGENDA = [
   { time: '11:15', patient: 'Felipe Arancibia', reason: 'Dolor abdominal', room: 'Box 3', status: 'Solicitada' },
 ];
 
+/** Citas extra de la semana demo (weekday: 0 = lunes … 4 = viernes). */
+export const SPECIALIST_WEEK_EXTRAS = [
+  { weekday: 0, time: '09:30', patient: 'Ana Contreras', reason: 'Control post-operatorio', room: 'Box 3', status: 'Confirmada' },
+  { weekday: 0, time: '11:00', patient: 'Luis Herrera', reason: 'Revisión de exámenes', room: 'Box 3', status: 'Confirmada' },
+  { weekday: 1, time: '10:00', patient: 'Patricia Núñez', reason: 'Primera consulta', room: 'Box 5', status: 'Solicitada' },
+  { weekday: 2, time: '15:00', patient: 'Diego Salinas', reason: 'Control crónico', room: 'Box 3', status: 'Confirmada' },
+  { weekday: 3, time: '16:30', patient: 'Elena Vargas', reason: 'Seguimiento dolor', room: 'Box 3', status: 'Confirmada' },
+] as const;
+
 export const PATIENT_APPOINTMENTS = [
   { date: 'Hoy, 09:00', doctor: 'Dr. Tomás Figueroa', place: 'Clínica Andes Norte', status: 'Confirmada' },
   { date: '18 Abr, 11:30', doctor: 'Dra. Paula Muñoz', place: 'Clínica Andes Norte', status: 'Pendiente' },
@@ -116,8 +130,20 @@ export const PATIENT_HISTORY = [
 ];
 
 export const PATIENT_SYMPTOMS = [
-  { date: 'Ayer, 22:14', level: 'Media', text: 'Dolor de cabeza persistente desde la tarde, sin fiebre.' },
-  { date: '03 Abr, 08:02', level: 'Baja', text: 'Ligera fatiga tras cambio de medicación.' },
+  {
+    date: 'Ayer, 22:14',
+    level: 'Media',
+    text: 'Dolor de cabeza persistente desde la tarde, sin fiebre.',
+    painScore: 5,
+    bodyAreas: ['cabeza'],
+  },
+  {
+    date: '03 Abr, 08:02',
+    level: 'Baja',
+    text: 'Ligera fatiga tras cambio de medicación.',
+    painScore: 2,
+    bodyAreas: ['generalizado'],
+  },
 ];
 
 export const ARCHITECTURE_LAYERS = [
