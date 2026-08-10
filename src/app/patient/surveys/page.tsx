@@ -25,7 +25,6 @@ export default async function PatientSurveysPage() {
 
   const available = rows.filter((r) => r.availability.status === 'available');
   const waiting = rows.filter((r) => r.availability.status === 'waiting');
-  const notAssigned = rows.filter((r) => r.availability.status === 'disabled');
 
   return (
     <PlatformShell
@@ -39,8 +38,7 @@ export default async function PatientSurveysPage() {
           {available.length === 0 ? (
             <Panel title="Sin pendientes">
               <p className="px-5 py-6 text-sm text-inkMuted">
-                No tienes encuestas abiertas. Tu especialista decide cuáles asignarte y
-                cuándo.
+                No tienes encuestas abiertas por ahora.
               </p>
             </Panel>
           ) : (
@@ -86,27 +84,6 @@ export default async function PatientSurveysPage() {
                   </div>
                   <span className="rounded-md bg-warn-soft px-2 py-1 text-xs font-bold text-warn">
                     En espera
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </Panel>
-        )}
-
-        {notAssigned.length > 0 && (
-          <Panel title="No asignadas">
-            <ul className="divide-y divide-line">
-              {notAssigned.map((item) => (
-                <li
-                  key={item.id}
-                  className="flex items-center justify-between gap-3 px-5 py-3.5"
-                >
-                  <div>
-                    <p className="text-sm font-bold text-inkMuted">{item.meta.shortLabel}</p>
-                    <p className="text-xs text-inkMuted">{item.meta.description}</p>
-                  </div>
-                  <span className="rounded-md bg-sunken px-2 py-1 text-xs font-bold text-inkMuted">
-                    No asignada
                   </span>
                 </li>
               ))}

@@ -262,7 +262,6 @@ export function PatientSurveyInbox({ patientKey }: { patientKey: string }) {
 
   const available = items.filter((i) => i.availability.status === 'available');
   const assignedWaiting = items.filter((i) => i.availability.status === 'waiting');
-  const notAssigned = items.filter((i) => i.availability.status === 'disabled');
 
   return (
     <div className="space-y-8">
@@ -270,7 +269,7 @@ export function PatientSurveyInbox({ patientKey }: { patientKey: string }) {
         <h2 className="signage-label text-inkMuted">Para completar ahora</h2>
         {available.length === 0 ? (
           <div className="rounded-xl border border-dashed border-lineStrong bg-surface/50 px-5 py-8 text-center text-sm text-inkMuted">
-            No tienes encuestas abiertas. Tu especialista decide cuáles asignarte y cuándo.
+            No tienes encuestas abiertas por ahora.
           </div>
         ) : (
           <div className="grid gap-4">
@@ -315,25 +314,6 @@ export function PatientSurveyInbox({ patientKey }: { patientKey: string }) {
                   availability={item.availability}
                   enabled={item.assignment.enabled}
                 />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {notAssigned.length > 0 && (
-        <section className="space-y-3">
-          <h2 className="signage-label text-inkMuted">No asignadas</h2>
-          <ul className="divide-y divide-line rounded-xl border border-line bg-canvas/50">
-            {notAssigned.map((item) => (
-              <li key={item.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
-                <div>
-                  <p className="text-sm font-bold text-inkMuted">{item.meta.shortLabel}</p>
-                  <p className="text-xs text-inkMuted">{item.meta.description}</p>
-                </div>
-                <span className="rounded-md bg-sunken px-2 py-1 text-xs font-bold text-inkMuted">
-                  No asignada
-                </span>
               </li>
             ))}
           </ul>
