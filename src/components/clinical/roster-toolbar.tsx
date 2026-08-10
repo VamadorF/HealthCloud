@@ -50,33 +50,31 @@ export function RosterToolbar({
         <p className="shrink-0 text-xs tabular-nums text-inkMuted sm:text-right">{resultLabel}</p>
       </div>
 
-      <div
-        role="group"
-        aria-label="Filtros"
-        className="flex flex-wrap gap-1.5"
-      >
-        {filters.map((filter) => {
-          const active = activeFilter === filter.id;
-          return (
-            <button
-              key={filter.id}
-              type="button"
-              aria-pressed={active}
-              onClick={() => onFilterChange(filter.id)}
-              className={`rounded-md px-2.5 py-1.5 text-xs font-bold transition-colors duration-150 ease-out-soft ${
-                active
-                  ? 'bg-brand text-white'
-                  : 'bg-sunken text-inkMuted hover:bg-brand-light hover:text-brand-mid'
-              }`}
-            >
-              {filter.label}
-              {typeof filter.count === 'number' ? (
-                <span className="ml-1 tabular-nums opacity-80">{filter.count}</span>
-              ) : null}
-            </button>
-          );
-        })}
-      </div>
+      {filters.length > 1 ? (
+        <div role="group" aria-label="Filtros" className="flex flex-wrap gap-1.5">
+          {filters.map((filter) => {
+            const active = activeFilter === filter.id;
+            return (
+              <button
+                key={filter.id}
+                type="button"
+                aria-pressed={active}
+                onClick={() => onFilterChange(filter.id)}
+                className={`rounded-md px-2.5 py-1.5 text-xs font-bold transition-colors duration-150 ease-out-soft ${
+                  active
+                    ? 'bg-brand text-white'
+                    : 'bg-sunken text-inkMuted hover:bg-brand-light hover:text-brand-mid'
+                }`}
+              >
+                {filter.label}
+                {typeof filter.count === 'number' ? (
+                  <span className="ml-1 tabular-nums opacity-80">{filter.count}</span>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
     </div>
   );
 }

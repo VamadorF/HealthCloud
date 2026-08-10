@@ -56,7 +56,7 @@ export function AuthSpecialistPatientsWorkspace({
         search={search}
         onSearchChange={setSearch}
         searchPlaceholder="Buscar por nombre, correo o alergias…"
-        filters={[{ id: 'todos', label: 'Todos', count: patients.length }]}
+        filters={[]}
         activeFilter="todos"
         onFilterChange={() => undefined}
         resultLabel={`${filtered.length} de ${patients.length} pacientes`}
